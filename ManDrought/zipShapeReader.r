@@ -1,5 +1,7 @@
 # creates a list of all shape files from the zips provided to the below function
-
+library(maptools)
+library(gpclib)
+gpclibPermit()
 
 read.shapes = function(loc) {
   shape.l = list()
@@ -40,4 +42,4 @@ read.shapes.from.zip = function(area.zip) {
   list(shp.list)
 }
 
-shapeList = read.shapes(loc)
+shapeList = read.shapes("~/Studentship/ManDrought/GIS/Regions")

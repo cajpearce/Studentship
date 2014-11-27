@@ -1,5 +1,6 @@
 Notes:
   + 	Think you need to use cbind with dataframes rather than df$v1 = ...
+  ->	SOLVED - not true. Screwed up my linkages. Fixed when fixed my copy and paste error
 
 Bugs:
 

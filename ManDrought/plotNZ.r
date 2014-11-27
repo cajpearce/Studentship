@@ -2,6 +2,8 @@
 
 library(maptools)
 library(scales)
+library(gpclib)
+gpclibPermit()
 
 read.shape.from.zip = function(area.zip,file.name) {
   temp.zip = tempfile()
@@ -25,7 +27,7 @@ plot.regions = function(shape.l, colours) {
 
 
 # Plot NZ region map
-NZ.region = read.shape.from.zip("GIS/NZ/NZ_L2_2006_NZMG_ArcShp.zip","TA06_LV2_V2.shp")
+NZ.region = read.shape.from.zip("~/Studentship/ManDrought/GIS/NZ/NZ_L2_2006_NZMG_ArcShp.zip","TA06_LV2_V2.shp")
 plot(NZ.region,xlim=c(2059004,3003022),
           ylim=c(5301970,6766245))
 

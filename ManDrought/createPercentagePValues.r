@@ -13,4 +13,3 @@ pt.pvalues = function(v1, v2) {
 }
 
 compact.df = cbind(compact.df,p.values = pt.pvalues(compact.df$Female,compact.df$Total))
-
