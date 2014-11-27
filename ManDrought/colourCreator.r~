@@ -16,4 +16,4 @@ colour.function = function(p.values, v1, midpoint=0.5) {
 	cols
 }
 
-compact.df$c1 = colour.function(compact.df$p.values,compact.df$percentage)
+compact.df = cbind(compact.df, c1 = colour.function(compact.df$p.values,compact.df$percentage))
