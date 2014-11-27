@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline xmlns="http://www.openapi.org/2014/" version="0.1">
+
+  <description>
+	This is the ManDraught app
+  </description>
+
+  <component name="m1" ref="prettyCSV.xml" type="module" />
+  <component name="m2" ref="createPercentagePValues.xml" type="module" />
+
+<!--
+	 
+  <component name="m3" ref="colourCreator.xml" type="module" />
+  <component name="m4" ref="zipShapeReader.xml" type="module" />
+  <component name="m5" ref="plotNZ.xml" type="module" />
+-->
+  <pipe>
+    <start output="compact.df" component="m1" />
+    <end input="compact.df" component="m2" />
+  </pipe>
+<!--
+  <pipe>
+    <start output="compact.df" component="m2" />
+    <end input="compact.df" component="m3" />
+  </pipe>
+
+  <pipe>
+    <start output="compact.df" component="m3" />
+    <end input="compact.df" component="m5" />
+  </pipe>
+
+  <pipe>
+    <start output="shapeList" component="m4" />
+    <end input="shapeList" component="m5" />
+  </pipe>
+-->
+</pipeline>

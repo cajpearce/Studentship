@@ -1,0 +1,9 @@
+<pipeline xmlns="http://www.openapi.org/2014/" version="0.1">
+  <description><![CDATA[connects m1 to m2]]></description>
+  <component ref="r/m1.xml" name="m1" type="module"/>
+  <component ref="r/m2.xml" name="m2" type="module"/>
+  <pipe>
+    <start output="x" component="m1"/>
+    <end input="x" component="m2"/>
+  </pipe>
+</pipeline>

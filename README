@@ -1,0 +1,22 @@
+Bugs:
+
++  Can't have spaces in directories
+
+
+Thoughts:
+  +	I find it quite confusing linking inputs to outputs. It doesn't seem natural.
+
+Errors:
+  +	> runPipeline(mandrought)
+ 	Error in readLines(findFile(ref, path)) : 'con' is not a connection
+  ->	FIXED
+  ->	Was an issue with capitalisation. Might pay to have a comparison script but I suppose it's up to the person to figure that one out
+
+
+
+
+Error Reporting:
+  + 	When reading in a file in the same directory as the original R script, it doesn't read it in.
+	Glue system needs to be able to set working directory to the original location.
+  +	When reading any kind of file, if it doesn't exist it should throw a meaningful error.
+  +	Needs to check inputs and outputs

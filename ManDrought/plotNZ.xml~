@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+	<module xmlns="http://www.openapi.org/2014/" version="0.1">
+	<platform name="R"/>
+	<description><![CDATA[Plots NZ]]></description>
+	<input name="shapeList" type="internal"/>
+	<input name="compact.df" type="internal"/>
+	<output name="plot" type="external" ref="Rplots.pdf"/>
+	<source ref="plotNZ.r"/>
+</module>
