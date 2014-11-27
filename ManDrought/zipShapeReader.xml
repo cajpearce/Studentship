@@ -6,5 +6,5 @@
 		<format><![CDATA["GIS/Regions"]]></format>
 	</input>
 	<output name="shapeList" type="internal"/>
-	<source ref="createPercentagePValues.r"/>
+	<source ref="zipShapeReader.r"/>
 </module>

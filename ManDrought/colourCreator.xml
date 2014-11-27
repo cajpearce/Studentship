@@ -4,5 +4,5 @@
 	<description><![CDATA[Adds Colour based on P-Values]]></description>
 	<input name ="compact.df" type="internal"/>
 	<output name="compact.df" type="internal"/>
-	<source ref="createPercentagePValues.r"/>
+	<source ref="colourCreator.r"/>
 </module>
