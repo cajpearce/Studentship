@@ -7,10 +7,13 @@
 
   <component name="m1" ref="prettyCSV.xml" type="module" />
   <component name="m2" ref="createPercentagePValues.xml" type="module" />
-	 
   <component name="m3" ref="colourCreator.xml" type="module" />
   <component name="m4" ref="zipShapeReader.xml" type="module" />
   <component name="m5" ref="plotNZ.xml" type="module" />
+
+  <component name="f1" ref="fileprompt.xml" type="module"/>
+  <component name="d1" ref="directoryprompt.xml" type="module"/>
+
   <pipe>
     <start output="compact.df" component="m1" />
     <end input="compact.df" component="m2" />

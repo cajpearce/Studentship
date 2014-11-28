@@ -6,6 +6,15 @@ Notes:
 		maptools
 		gpclib
 
+(28 Nov 15:17) customising inputs easily would be good - can reuse directorychooser
+
+  +	Cannot read in directories for external files without user input
+	  -	Is this a good thing?
+		You probably wouldn't want a script that automatically picks up user directories
+		Probably a good thing if users provide their own directories
+	  -	BUT - there should be an option for users to skip this process and do it automatically
+	  -	readline = automatically, file.choose=manually
+
 Bugs:
 
   +	Can't have spaces in directories
@@ -13,7 +22,7 @@ Bugs:
 
 Thoughts:
   +	I find it quite confusing linking inputs to outputs. It doesn't seem natural.
-
+(28 Nov 15:08)	I would like to be able to provide inline source as an input - so I don't have to create 2 XML files just to customise the input. See directoryprompt.r
 
 
 Error Reporting:
