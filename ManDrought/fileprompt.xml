@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<module xmlns="http://www.openapi.org/2014/" version="0.1">
-	<platform name="R"/>
-	<description><![CDATA[Prompts the user for a file]]></description>
-	<output name="external.file" type="internal"/>
-	<source ref="fileprompt.r"/>
-</module>
