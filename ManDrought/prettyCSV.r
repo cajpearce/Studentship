@@ -1,6 +1,6 @@
 # Read the CSV into R
 ########## Module
-print("Choose your CSV file:")
+
 age.sex.df = read.csv(CSV.loc,header=T)
 
 remove.1D.rows = function(data) {
@@ -23,3 +23,10 @@ compact.df = as.data.frame(unclass(compact.tab))
 
 # Rename to make it prettier
 names(compact.df) = c("Female","Male","Total")
+
+getTitle = function(title, data) {
+	factored.column = factor(data[,title])
+	paste(title,levels(factored.column),sep=": ",collapse=" ")
+}
+
+finalTitle = getTitle(title,age.sex.df)

@@ -26,6 +26,17 @@
   <pipe>
     <start output="GIS.loc" component="data.loc"/>
     <end input="GIS.loc" component="m5"/>
+  </pipe>
+
+  <pipe>
+    <start output="title" component="data.loc"/>
+    <end input="title" component="m1"/>
+  </pipe>
+
+  <pipe>
+    <start output="finalTitle" component="m1"/>
+    <end input="finalTitle" component="m5"/>
+  </pipe>
 
   <pipe>
     <start output="compact.df" component="m1" />

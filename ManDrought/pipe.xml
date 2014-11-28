@@ -29,6 +29,11 @@
   </pipe>
 
   <pipe>
+    <start output="title" component="data.loc"/>
+    <end input="title" component="m1"/>
+  </pipe>
+
+  <pipe>
     <start output="compact.df" component="m1" />
     <end input="compact.df" component="m2" />
   </pipe>

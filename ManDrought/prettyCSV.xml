@@ -3,6 +3,7 @@
   <platform name="R" />
   <description><![CDATA[Output is a cleaned and tabulated data.frame]]></description>
   <input name="CSV.loc" type="internal" />
+  <input name="title" type="internal" />
   <output name="compact.df" type="internal" />
   <source ref="prettyCSV.r"/>
 </module>

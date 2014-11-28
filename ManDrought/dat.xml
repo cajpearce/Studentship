@@ -4,5 +4,6 @@
 	<description><![CDATA[Hack dat file with locations for the files]]></description>
 	<output name="CSV.loc" type="internal"/>
 	<output name="GIS.loc" type="internal"/>
+	<output name="title"   type="internal"/>
 	<source ref="dat.r"/>
 </module>
