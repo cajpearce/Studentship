@@ -20,6 +20,7 @@ Bugs:
   +	Can't have spaces in directories
 (28 Nov 15:29)  Since modules run in a seperate environment, it can't accept user input
 		   -	http://stackoverflow.com/questions/25126486/r-skips-readline-in-loop
+(28 Nov 17:06)	Title (in CSV) cannot have spaces
 
 
 Thoughts:
