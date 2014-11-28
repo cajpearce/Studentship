@@ -2,6 +2,7 @@
 <module xmlns="http://www.openapi.org/2014/" version="0.1">
 	<platform name="R"/>
 	<description><![CDATA[Adds Colour based on P-Values]]></description>
+	<input name="GIS.loc" type="internal"/>
 	<output name="shapeList" type="internal"/>
 	<source ref="zipShapeReader.r"/>
 </module>

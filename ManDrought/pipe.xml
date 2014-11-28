@@ -17,11 +17,17 @@
     <start output="CSV.loc" component="data.loc" />
     <end input="CSV.loc" component="m1" />
   </pipe>
-  <!--
+  
   <pipe>
-    <start output="GIS.loc" component=
+    <start output="GIS.loc" component="data.loc"/>
+    <end input="GIS.loc" component="m4" />
   </pipe>
-  -->
+  
+  <pipe>
+    <start output="GIS.loc" component="data.loc"/>
+    <end input="GIS.loc" component="m5"/>
+  </pipe>
+
   <pipe>
     <start output="compact.df" component="m1" />
     <end input="compact.df" component="m2" />

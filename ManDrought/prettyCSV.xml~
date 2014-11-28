@@ -3,5 +3,5 @@
   <platform name="R" />
   <description><![CDATA[Output is a cleaned and tabulated data.frame]]></description>
   <output name="compact.df" type="internal" />
-  <source ref="prettyCSV.r" />
+  <source ref="prettyCSV.r"/>
 </module>

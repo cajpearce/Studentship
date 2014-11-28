@@ -42,4 +42,5 @@ read.shapes.from.zip = function(area.zip) {
   list(shp.list)
 }
 
-shapeList = read.shapes("~/Studentship/ManDrought/GIS/Regions")
+regions.loc = paste(GIS.loc,"Regions",sep="/")
+shapeList = read.shapes(regions.loc)
