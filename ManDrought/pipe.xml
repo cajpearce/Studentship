@@ -11,13 +11,22 @@
   <component name="m4" ref="zipShapeReader.xml" type="module" />
   <component name="m5" ref="plotNZ.xml" type="module" />
 
-  <component name="f1" ref="fileprompt.xml" type="module"/>
-  <component name="d1" ref="directoryprompt.xml" type="module"/>
+  <component name="data.loc" ref="dat.xml" type="module"/>
 
+  <pipe>
+    <start output="CSV.loc" component="data.loc" />
+    <end input="CSV.loc" component="m1" />
+  </pipe>
+  <!--
+  <pipe>
+    <start output="GIS.loc" component=
+  </pipe>
+  -->
   <pipe>
     <start output="compact.df" component="m1" />
     <end input="compact.df" component="m2" />
   </pipe>
+
   <pipe>
     <start output="compact.df" component="m2" />
     <end input="compact.df" component="m3" />

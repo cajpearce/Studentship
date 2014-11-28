@@ -1,7 +1,7 @@
 # Read the CSV into R
 ########## Module
 print("Choose your CSV file:")
-age.sex.df = read.csv(new.file,header=T)
+age.sex.df = read.csv(CSV.loc,header=T)
 
 remove.1D.rows = function(data) {
 	factored.data = lapply(data, factor)
