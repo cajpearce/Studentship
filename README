@@ -20,7 +20,7 @@ Bugs:
 
 Thoughts:
   +	I find it quite confusing linking inputs to outputs. It doesn't seem natural.
-
+(28 Nov 15:08)	I would like to be able to provide inline source as an input - so I don't have to create 2 XML files just to customise the input. See directoryprompt.r
 
 
 Error Reporting:
