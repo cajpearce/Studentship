@@ -11,6 +11,7 @@
   <component name="m3" ref="colourCreator.xml" type="module" />
   <component name="m4" ref="zipShapeReader.xml" type="module" />
   <component name="m5" ref="plotNZ.xml" type="module" />
+  <component name="test" ref="test.xml" type="module" />
   <pipe>
     <start output="compact.df" component="m1" />
     <end input="compact.df" component="m2" />

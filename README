@@ -6,6 +6,13 @@ Notes:
 		maptools
 		gpclib
 
+  +	Cannot read in directories for external files without user input
+	  -	Is this a good thing?
+		You probably wouldn't want a script that automatically picks up user directories
+		Probably a good thing if users provide their own directories
+	  -	BUT - there should be an option for users to skip this process and do it automatically
+	  -	readline = automatically, file.choose=manually
+
 Bugs:
 
   +	Can't have spaces in directories
