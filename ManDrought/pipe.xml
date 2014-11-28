@@ -34,6 +34,11 @@
   </pipe>
 
   <pipe>
+    <start output="finalTitle" component="m1"/>
+    <end input="finalTitle" component="m5"/>
+  </pipe>
+
+  <pipe>
     <start output="compact.df" component="m1" />
     <end input="compact.df" component="m2" />
   </pipe>

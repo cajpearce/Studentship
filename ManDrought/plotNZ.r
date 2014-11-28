@@ -29,8 +29,9 @@ plot.regions = function(shape.l, colours) {
 # Plot NZ region map
 NZ.loc = paste(GIS.loc,"NZ/NZ_L2_2006_NZMG_ArcShp.zip",sep="/")
 NZ.region = read.shape.from.zip(NZ.loc,"TA06_LV2_V2.shp")
-plot(NZ.region,xlim=c(2059004,3003022),
-          ylim=c(5301970,6766245))
+plot(NZ.region,	xlim=c(2059004,3003022),
+		ylim=c(5301970,6766245),
+	 	main=finalTitle)
 
 
 #this should be standalone in plotRegions.r
