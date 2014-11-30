@@ -6,6 +6,9 @@ Notes:
 		maptools
 		gpclib
 
+(01 Dec 10:03) Really struggling to figure out how to compare the regions with crime districts
+		Trying to map Ethnicity distribution in Regions with Crime statistics in those regions
+
 (28 Nov 15:17) customising inputs easily would be good - can reuse directorychooser
 
   +	Cannot read in directories for external files without user input
@@ -20,6 +23,7 @@ Bugs:
   +	Can't have spaces in directories
 (28 Nov 15:29)  Since modules run in a seperate environment, it can't accept user input
 		   -	http://stackoverflow.com/questions/25126486/r-skips-readline-in-loop
+(28 Nov 17:06)	Title (in CSV) cannot have spaces
 
 
 Thoughts:
