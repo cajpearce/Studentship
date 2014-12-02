@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<module xmlns="http://www.openapi.org/2014/" version="0.1">
+	<platform name="R"/>
+	<description><![CDATA[Hack dat file with locations for the files]]></description>
+	<output name="CSV.loc" type="internal"/>
+	<output name="GIS.loc" type="internal"/>
+	<output name="shp.name" type="internal"/>
+	<output name="title"   type="internal"/>
+	<source ref="dat.r"/>
+</module>

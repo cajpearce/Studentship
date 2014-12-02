@@ -27,8 +27,6 @@ area.id = registers[shp.name]
 
 plot(NZ.region,col=compact.df$c1,main=finalTitle)
 
-# Clearly need to sort compact.df by NZ.region... Use sort and a custom order
-# http://stackoverflow.com/questions/17751886/sort-vector-of-integers-in-specific-custom-order
 print(cbind(as.character(NZ.region[[area.id]]),rownames(compact.df)))
 
 legend(x=5000000,y=2400000,c("More Females","More Males","No Difference"),cex=.8, 
