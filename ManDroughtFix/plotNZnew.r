@@ -23,12 +23,15 @@ NZ.region = readShapeSpatial(NZ.loc)
 
 area.id = registers[shp.name]
 
-#NZ.region = NZ.region[NZ.region[[area.id]] != "Area Outside Region",]
+# Order compact df to match the colours properly
+compact.df = compact.df[order(factor(rownames(compact.df),levels = as.character(NZ.region[[area.id]]))),]
 
 plot(NZ.region,col=compact.df$c1,main=finalTitle)
 
 # Clearly need to sort compact.df by NZ.region... Use sort and a custom order
 # http://stackoverflow.com/questions/17751886/sort-vector-of-integers-in-specific-custom-order
+
+
 print(cbind(as.character(NZ.region[[area.id]]),rownames(compact.df)))
 
 legend(x=5000000,y=2400000,c("More Females","More Males","No Difference"),cex=.8, 
@@ -43,4 +46,3 @@ read.shape.from.zip = function(area.zip,file.name) {
   unlink(temp.zip)
   shp
 }
-

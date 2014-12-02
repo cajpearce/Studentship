@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module xmlns="http://www.openapi.org/2014/" version="0.1">
-  <platform name="R" />
-  <description><![CDATA[Adds the percentages of and p.values to the dataframe]]></description>
-  <input name="compact.df" type="internal" />
-  <output name="compact.df" type="internal" />
-  <source ref="createPercentagePValues.r" />
-</module>
