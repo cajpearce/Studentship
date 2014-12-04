@@ -47,3 +47,8 @@ colourFunction = function(partyStr) {
 }
 
 nzp$Col = colourFunction(nzp$Government)
+
+fin = length(nzp$Year)
+add.term = nzp[fin,]
+nzp[fin + 1,] = add.term
+nzp[fin + 1,"Year"] = 2017

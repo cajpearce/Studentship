@@ -4,3 +4,12 @@ Notes:
   +	Packages needed:
 		zoo (for formatting year months)
 		gdata (for reading in excel documents)
+
+
+  +	BUG
+		expected '>'
+		Premature end of data in tag pipeline line 2
+		Error: 1: expected '>'
+		2: Premature end of data in tag pipeline line 2
+	Happened when I accidentally forgot to close </pipe> tag
+	Should give a more indicative warning

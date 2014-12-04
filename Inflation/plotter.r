@@ -1,5 +1,7 @@
-png("inflation.png",width=640)
-plot(compact.df$Date, compact.df$R.USD,
+library(zoo)
+
+#png("inflation.png",width=640)
+plot(compact.df$Date, compact.df$USD,
 	xlab="Date",ylab="NZD to USD conversion rate",main="NZD value over time")
 my.seq = seq(1,length(compact.df[,1]),by=12*5)
 
@@ -19,6 +21,10 @@ for(i2 in 2:length(nzp$Col)) {
 	}
 }
 
-rect(2014,-1,2017,10,col=blue,border=blue,lwd=0)
+#rect(2014,-1,2017,10,col=blue,border=blue,lwd=0)
 
-dev.off()
+years = 12
+
+lo = lowess(compact.df$USD, f = (12*years)/length(compact.df$Date))
+lines(index(compact.df$USD),lo$y,lwd=4,col="green")
+#dev.off()

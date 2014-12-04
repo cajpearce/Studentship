@@ -13,3 +13,5 @@ rownames(df) = new.dates
 
 df$Year = format(new.dates, "%Y")
 df$Date = new.dates
+
+df$USD = zoo(df$R.USD,df$Date)
