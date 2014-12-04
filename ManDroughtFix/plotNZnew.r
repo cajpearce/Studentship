@@ -32,7 +32,7 @@ plot(NZ.region,col=compact.df$c1,main=finalTitle)
 # http://stackoverflow.com/questions/17751886/sort-vector-of-integers-in-specific-custom-order
 
 
-print(cbind(as.character(NZ.region[[area.id]]),rownames(compact.df)))
+#print(cbind(as.character(NZ.region[[area.id]]),rownames(compact.df)))
 
 legend(x=5000000,y=2400000,c("More Females","More Males","No Difference"),cex=.8, 
         col=c("red","green","yellow"),pch=c(15))
@@ -46,3 +46,5 @@ read.shape.from.zip = function(area.zip,file.name) {
   unlink(temp.zip)
   shp
 }
+
+length(as.character(NZ.region[[area.id]]))

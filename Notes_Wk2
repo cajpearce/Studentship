@@ -1,0 +1,6 @@
+Notes:
+  +	Finding prettyCSV function remove1Drows really useful - in Inflation
+	I've turned it into its own module - I've found it useful everywhere
+  +	Packages needed:
+		zoo (for formatting year months)
+		gdata (for reading in excel documents)

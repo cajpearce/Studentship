@@ -46,6 +46,3 @@ read.shape.from.zip = function(area.zip,file.name) {
   unlink(temp.zip)
   shp
 }
-
-compact.df = compact.df[order(factor(rownames(compact.df),levels = as.character(NZ.region[[area.id]]))),]
-
