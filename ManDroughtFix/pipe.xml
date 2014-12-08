@@ -29,7 +29,7 @@
 
   <pipe>
     <start output="shp.name" component="data.loc"/>
-    <end input="shp.name" component="m1"/>
+    <end input="shp.name" component="m5"/>
   </pipe>
 
 

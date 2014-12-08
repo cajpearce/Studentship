@@ -6,5 +6,5 @@
 	<input name="GIS.loc" type="internal"/>
 	<input name="finalTitle" type="internal"/>
 	<output name="plot" type="external" ref="Rplots.pdf"/>
-	<source ref="plotNZ.r"/>
+	<source ref="plotNZnew.r"/>
 </module>

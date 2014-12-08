@@ -13,3 +13,24 @@ Notes:
 		2: Premature end of data in tag pipeline line 2
 	Happened when I accidentally forgot to close </pipe> tag
 	Should give a more indicative warning
+
+
+Friday
+  +	Working on converting 'Inflation' into 'PyFlation'
+  +	Currently need:
+		pip
+		sudo pip install xlrd
+		sudo pip install xlwt
+  +	Pandas wouldn't install on here :(
+  +	Python is so difficult
+
+  +	Can't get anything to work in Python
+	Will have another go after the weekend. Tried my best but python
+	documentation is so hard to navigate.
+
+Log:
+	Started in xlrd, couldn't figure out how to read in
+	opened up urllib2, read in a socket, read into xlrd
+	Couldn't figure out how to remove columns, moved to pandas
+	pandas doesn't work either
+	PYTHON MIGHT BE USER FRIENDLY BUT BY GOD IT'S NOT DEVELOPER FRIENDLY

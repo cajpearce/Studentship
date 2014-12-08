@@ -5,6 +5,7 @@
 	<input name="compact.df" type="internal"/>
 	<input name="GIS.loc" type="internal"/>
 	<input name="finalTitle" type="internal"/>
+	<input name="shp.name" type="internal"/>
 	<output name="plot" type="external" ref="Rplots.pdf"/>
 	<source ref="plotNZnew.r"/>
 </module>
