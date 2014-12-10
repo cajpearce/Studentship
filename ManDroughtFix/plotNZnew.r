@@ -32,9 +32,18 @@ plot(NZ.region,col=compact.df$c1,main=finalTitle)
 # http://stackoverflow.com/questions/17751886/sort-vector-of-integers-in-specific-custom-order
 
 
-#print(cbind(as.character(NZ.region[[area.id]]),rownames(compact.df)))
+# Determine plot boundaries, in units of the data
+xmin <- par("usr")[1]
+xmax <- par("usr")[2]
+ymin <- par("usr")[3]
+ymax <- par("usr")[4]
 
-legend(x=5000000,y=2400000,c("More Females","More Males","No Difference"),cex=.8, 
+xrange = range(xmin,xmax)
+yrange = range(ymin,ymax)
+xx = xmin + xrange/10
+yy = ymax - yrange/10
+
+legend(x = xx,y=yy,c("More Females","More Males","No Difference"),cex=0.8, 
         col=c("red","green","yellow"),pch=c(15))
 
 
@@ -46,5 +55,3 @@ read.shape.from.zip = function(area.zip,file.name) {
   unlink(temp.zip)
   shp
 }
-
-length(as.character(NZ.region[[area.id]]))
