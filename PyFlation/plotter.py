@@ -1,33 +1,65 @@
+import matplotlib
 import matplotlib.pyplot as plt
+plt.interactive(True)
 
-df.plot()
+ax = df.plot()
 
+
+# I need to convert years into the ID of the observation
+
+def year_start_terms(item_list):
+	global nzp
+	
+	govt = list(nzp['Government'])
+	years = list(item_list)
+
+	first_govt = 0
+	
+	ret_list = [years[first_govt]]
+	
+	for term in range(1,len(govt)):
+		if govt[term] is not govt[first_govt]:
+			ret_list.append(years[term])
+			first_govt = term
+	return ret_list
+
+
+def get_ID_from_year(year):
+	global df
+	years = list(df.index.year)
+	return years.index(year)
+
+
+def draw_parliament_terms():
+	global ax,df,colours,nzp
+	
+	ymin = ax.axis()[2]
+	ymax = ax.axis()[3]
+
+	colours_by_term = year_start_terms(colours)
+	years_by_term = map(int, year_start_terms(nzp['Year']))
+	
+	for i in range(0, len(years_by_term) - 1):
+		start_year = 0
+		end_year = len(df)
+		try:
+			start_year = get_ID_from_year(years_by_term[i])
+		except:
+			pass
+
+		try:
+			end_year = get_ID_from_year(years_by_term[i + 1])
+		except:
+			pass
+
+		if start_year != 0 and end_year != len(df):
+			rect = plt.Rectangle((start_year,ymin),end_year - start_year, ymax - ymin, color = colours_by_term[i])
+			ax.add_patch(rect)
+
+draw_parliament_terms()
 
 '''
-library(zoo)
-
-#png("inflation.png",width=640)
-plot(compact.df$Date, compact.df$USD,
-	xlab="Date",ylab="NZD to USD conversion rate",main="NZD value over time")
-my.seq = seq(1,length(compact.df[,1]),by=12*5)
-
-#abline(v=compact.df$Date[my.seq],lty="dashed")
 abline(h=1)
-for(i2 in 2:length(nzp$Col)) {
-	i = i2 - 1
-	xl = nzp$Year[i]
-	xr = nzp$Year[i2]
-	y1 = -1
-	y2 = 10
-
-	rect(xl,y1,xr,y2,col=nzp$Col[i],border=nzp$Col,lwd=0)
-
-	if(nzp$Col[i2] != nzp$Col[i]) {
-		abline(v=nzp$Year[i2],lty="dashed",lwd=2)
-	}
-}
-
-#rect(2014,-1,2017,10,col=blue,border=blue,lwd=0)
 
 years = 12
 
