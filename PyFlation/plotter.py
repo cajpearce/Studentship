@@ -1,11 +1,7 @@
 import matplotlib
 import matplotlib.pyplot as plt
+import pandas as pd
 plt.interactive(True)
-
-ax = df.plot()
-
-
-# I need to convert years into the ID of the observation
 
 def year_start_terms(item_list):
 	global nzp
@@ -38,25 +34,38 @@ def draw_parliament_terms():
 
 	colours_by_term = year_start_terms(colours)
 	years_by_term = map(int, year_start_terms(nzp['Year']))
-	
+	years_by_term.append(2017) # Just because it's START terms, and National are prob going to be in till 2017
 	for i in range(0, len(years_by_term) - 1):
-		start_year = 0
-		end_year = len(df)
+		start_ID = 0
+		end_ID = len(df)
+		change = False
 		try:
-			start_year = get_ID_from_year(years_by_term[i])
+
+			start_ID = get_ID_from_year(years_by_term[i])
+			change = True
 		except:
 			pass
 
 		try:
-			end_year = get_ID_from_year(years_by_term[i + 1])
+
+			end_ID = get_ID_from_year(years_by_term[i + 1])
+			change = True
 		except:
 			pass
-
-		if start_year != 0 and end_year != len(df):
-			rect = plt.Rectangle((start_year,ymin),end_year - start_year, ymax - ymin, color = colours_by_term[i])
+		
+		if change:
+			rect = plt.Rectangle((start_ID,ymin),end_ID - start_ID, ymax - ymin, color = colours_by_term[i])
 			ax.add_patch(rect)
 
+
+ax = df.plot()
 draw_parliament_terms()
+
+pd.options.display.mpl_style = 'default'
+new_style = {'grid': False}
+matplotlib.rc('axes', **new_style)
+#plt.show()
+plt.savefig('NZDtoUSD.pdf', bbox_inches='tight')
 
 '''
 abline(h=1)

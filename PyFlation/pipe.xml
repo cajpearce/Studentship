@@ -6,22 +6,22 @@
   </description>
 
   <component name="start" ref="inflation.xml" type="module"/>
-  <component name="clean" ref="prettyDF.xml" type="module"/>
+  <component name="terms" ref="htmlscraper.xml" type="module"/>
   <component name="plot" ref="plotter.xml" type="module"/>
-  <component name="Ptterms" ref="htmlscraper.xml" type="module"/>
-
+  
   <pipe>
     <start output="df" component="start"/>
-    <end input="df" component="clean"/>
+    <end input="df" component="plot"/>
+  </pipe>
+  
+  <pipe>
+    <start output="colours" component="terms"/>
+    <end input="colours" component="plot"/>
   </pipe>
 
   <pipe>
-    <start output="compact.df" component="clean"/>
-    <end input="compact.df" component="plot"/>
-  </pipe>
-
-  <pipe>
-    <start output="nzp" component="Ptterms"/>
+    <start output="nzp" component="terms"/>
     <end input="nzp" component="plot"/>
   </pipe>
+
 </pipeline>

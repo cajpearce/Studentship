@@ -1,0 +1,15 @@
+In addition: Warning messages:
+1: In FUN(X[[3L]], ...) :
+  Start output 'colours' in pipe 'terms:colours -> plot:colours' does not exist
+2: In FUN(X[[3L]], ...) :
+  End input 'colours' in pipe 'terms:colours -> plot:colours' does not exist
+
+
+  -	Found this warning message to be really useful, this is the level of
+	error documentation that is useful
+
+
+
+Pickle doesn't load properly - need to specify file extension
+	pickle.load(open("..../dataframe",rb)) won't work
+	pickle.load(open("..../dataframe.pickle",rb)) will
