@@ -4,6 +4,6 @@
 	<description><![CDATA[Adds Colour based on P-Values]]></description>
 	<input name="compact.df" type="internal"/>
 	<input name="nzp" type="internal"/>
-	<output name="plot" type="external" ref="inflation.png"/>
+	<output name="plot" type="external" ref="Rplots.pdf"/>
 	<source ref="plotter.r"/>
 </module>

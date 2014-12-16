@@ -3,7 +3,8 @@
 link = "http://www.football-data.co.uk"
 
 ### read in the webpage
-webpage = readLines(paste(link,"englandm.php",sep="/"))
+#Sys.setlocale('LC_ALL','C')
+webpage = readLines(paste(link,"englandm.php",sep="/"),encoding='UTF-8')
 print(paste("Downloaded main HTML page from:",link))
 ### get the index of the titles
 season.index = grep("Season", webpage)
@@ -61,6 +62,17 @@ for(i in 1:length(unique.df[1,])) {
 ### changing all zeroes to NA to signify they're not there
 unique.df[unique.df == 0] = NA
 
+custom.sort = function(df) {
+	max.cols = apply(df,2,max,na.rm=TRUE)
+	number.of.seasons = apply(unique.df,2, function(x) length(which(!is.na(x))))
+	order.alphabet = order(names(df))
+	order(-max.cols,-number.of.seasons,order(names(df)))
+}
 
-stripchart(unique.df,vertical=TRUE,pch=16,type="l")
+unique.df = unique.df[custom.sort(unique.df)]
+
+# Change the label orientation
+par(las=2)
+stripchart(unique.df,vertical=TRUE,type="b",lwd=4,pch=10)
+
 

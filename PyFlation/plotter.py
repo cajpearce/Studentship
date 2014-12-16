@@ -1,8 +1,8 @@
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
-plt.interactive(True)
-
+# Set this to True to show the plot
+plt.interactive(False)
 def year_start_terms(item_list):
 	global nzp
 	
