@@ -2,35 +2,35 @@ Reflections on PyFlation:
 
 Original was Inflation. Converted to Python. Essentially the same.
 
-Preface:
+<b>Preface:</b>
 
-Module 1 - inflation.py:
-	download spreadsheet from the reserve bank, take the right worksheet, 
-	grab the USD information.
+<b>Module 1 - inflation.py:</b>
+
+Download spreadsheet from the reserve bank, take the right worksheet, grab the
+USD information.
 	
-	Use xlrd to read the excel file, use pandas to store the information as
-	a dataset. pandas attempts a pythonic representation of data the way
-	R stores data
+Use xlrd to read the excel file, use pandas to store the information as a 
+dataset. pandas attempts a pythonic representation of data the way R stores data
 
-Module 2 - htmlscraper.py:
-	read the editable version of text from a wikipedia page and grab a table
-	from that.
-
-	a lot of these functions can be used more generally as separate modules,
-	but i prefer the hybrid approach.
+<b>Module 2 - htmlscraper.py:</b>
 	
-	in the htmlscraper.py is also the processing to assign colours to
-	different parties: National gets blue, Labour gets red, old parties get 
-	green. In all effectiveness the old parties are redundant with the
-	USD information because the dataset only goes back to the 1970s, but
-	it promotes a more generic feel and can be reused this way.
+Read the editable version of text from a wikipedia page and grab a table from it.
 
-	uses wikimarkup and pyquery to grab a table from a wikipedia page.
+A lot of these functions can be used more generally as separate modules, but i 
+prefer the hybrid approach.
+	
+In the htmlscraper.py is also the processing to assign colours to different 
+parties: National gets blue, Labour gets red, old parties get green. In all 
+effectiveness the old parties are redundant with the USD information because the
+dataset only goes back to the 1970s, but it promotes a more generic feel and can
+be reused this way.
 
-	Done very differently in R: in R I grabbed it directly from the html
-	but for python I lazily copied some code from a stackoverflow page.
-	Luckily there is already a wikimarkup library so took a lot of the work
-	out of it. But was definitely easier in R.
+Uses wikimarkup and pyquery to grab a table from a wikipedia page.
+
+Done very differently in R: in R I grabbed it directly from the html but for 
+python I lazily copied some code from a stackoverflow page. Luckily there is 
+already a wikimarkup library so took a lot of the work out of it.
+But was definitely easier in R.
 
 <b>Module 3 - plotter.py:</b>
 
@@ -50,7 +50,10 @@ Code follow-through:
 
 Module 1 - inflation.py:
 
+Read the data into a dataframe (data) from the remote excel file
 ```
-new_dates = pd.DataFrame(map(lambda x: re.sub("M","-",x), dates))
-new_dates = pd.DatetimeIndex(new_dates[0]).to_period('M')
+rb_socket = urllib2.urlopen('http://www.rbnz.govt.nz/statistics/key_graphs/graphdata.xls')
+data = pd.io.excel.read_excel(rb_socket, 7, skiprows=4)
 ```
+
+
