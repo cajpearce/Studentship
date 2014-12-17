@@ -222,5 +222,6 @@ lines(index(compact.df$USD),lo$y,lwd=4,col="green")
 Plots a lowess curve smoothed by a 12 year cycle. it is 12 * years in the lowess
 because the data is measured monthly.
 
-![Alt text](/Rplots.pdf?raw=true "R plot")
+![R plot](/Rplots.png?raw=true "R plot")
+
 :)
