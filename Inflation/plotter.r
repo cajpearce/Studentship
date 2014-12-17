@@ -14,7 +14,7 @@ for(i2 in 2:length(nzp$Col)) {
 	y1 = -1
 	y2 = 10
 
-	rect(xl,y1,xr,y2,col=nzp$Col[i],border=nzp$Col,lwd=0)
+	rect(xl,y1,xr,y2,col=nzp$Col[i],border=nzp$Col[i],lwd=0)
 
 	if(nzp$Col[i2] != nzp$Col[i]) {
 		abline(v=nzp$Year[i2],lty="dashed",lwd=2)
