@@ -104,11 +104,3 @@ def colour_function(party):
 	return other
 
 colours = colour_function(nzp['Government'])
-
-# Add 2017 to the pack
-'''
-fin = length(nzp$Year)
-add.term = nzp[fin,]
-nzp[fin + 1,] = add.term
-nzp[fin + 1,"Year"] = 2017
-'''
