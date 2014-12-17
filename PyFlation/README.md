@@ -33,17 +33,16 @@ Module 2 - htmlscraper.py:
 	out of it. But was definitely easier in R.
 
 Module 3 - plotter.py:
-	The process is essentially the same as in R, except with a few edits.
-	In python I decided to draw the colour boxes (for different Parliament
-	terms) literally as they started/ended. in R this was done differently -
-	it was done at the start of each term, not at the start of each govt.
-	change.
+The process is essentially the same as in R, except with a few edits. In python 
+I decided to draw the colour boxes (for different Parliament terms) literally as
+they started/ended. in R this was done differently - it was done at the start of
+each term, not at the start of each government change.
 
-	The code for R is a lot shorter, for essentially the same results. Plus
-	I managed to fit in a lowess fitted line in R. In R the plot is made in
-	under half the lines of code, and makes so much more sense.
+The code for R is a lot shorter, for essentially the same results. Plus I 
+managed to fit in a lowess fitted line in R. In R the plot is made in under half
+the lines of code, and makes so much more sense.
 
-	Conclusion? Python sucks for this sort of stuff.
+Conclusion? Python sucks for this sort of stuff.
 
 
 Code follow-through:
