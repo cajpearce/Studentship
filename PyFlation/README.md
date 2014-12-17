@@ -32,7 +32,8 @@ Module 2 - htmlscraper.py:
 	Luckily there is already a wikimarkup library so took a lot of the work
 	out of it. But was definitely easier in R.
 
-Module 3 - plotter.py:
+<b>Module 3 - plotter.py:</b>
+
 The process is essentially the same as in R, except with a few edits. In python 
 I decided to draw the colour boxes (for different Parliament terms) literally as
 they started/ended. in R this was done differently - it was done at the start of
