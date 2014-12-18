@@ -43,7 +43,7 @@ yrange = range(ymin,ymax)
 xx = xmin + xrange/10
 yy = ymax - yrange/10
 
-legend(x = xx,y=yy,c("More Females","More Males","No Difference"),cex=1, 
+legend(x = xx,y=yy,c("More Females","More Males","No Difference"),cex=0.8, 
         col=c("red","green","yellow"),pch=c(15))
 
 

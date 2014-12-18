@@ -13,6 +13,7 @@ names(registers) = c("WARD2014_GV_Clipped.shp","UA2014_GV_Clipped.shp","TASUB201
 "TA2014_GV_Clipped.shp","REGC2014_GV_Clipped.shp","MCON2014_GV_Clipped.shp","CON2014_GV_Clipped.shp",
 "CB2014_GV_Clipped.shp","AU2014_GV_Clipped.shp")
 
+area.id = registers[shp.name]
 
 # Paste together the GIS locations and the shape name
 NZ.loc = paste(GIS.loc,shp.name,sep="/")
@@ -20,8 +21,6 @@ NZ.region = readShapeSpatial(NZ.loc)
 
 # NZ.region@data to access meta data
 # NZ.region[[area.id]] is same as $
-
-area.id = registers[shp.name]
 
 # Order compact df to match the colours properly
 compact.df = compact.df[order(factor(rownames(compact.df),levels = as.character(NZ.region[[area.id]]))),]

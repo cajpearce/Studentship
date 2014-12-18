@@ -1,7 +1,5 @@
 # Read the CSV into R
 ########## Module
-CSV.loc="agesexdata.csv"
-
 age.sex.df = read.csv(CSV.loc,header=T)
 
 remove.1D.rows = function(data) {

@@ -2,14 +2,14 @@
 ########## Module
 age.sex.df = read.csv(CSV.loc,header=T)
 
-remove.1D.rows = function(data) {
+remove.1D.cols = function(data) {
 	factored.data = lapply(data, factor)
 	nleveler = Vectorize(nlevels)
 	data[!(nleveler(factored.data) <= 1)]
 }
 
 # Get rid of the unnecessary columns (1 dimensional/no information)
-compact.df = remove.1D.rows(age.sex.df)
+compact.df = remove.1D.cols(age.sex.df)
 ############
 
 
