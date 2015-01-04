@@ -27,3 +27,13 @@ PYTHON PACKAGES
 		re
 		urllib2
 		matplotlib
+
+
+Next effort:
+  -	Fiscal
+	Planning to reuse colour terms (htmlscaper.r) to plot percentage of
+	education and percentage of welfare
+
+PROBLEM:
+	Wide character in print at /home/cpea714/R/x86_64-pc-linux-gnu-library/3.1/gdata/perl/xls2csv.pl line 270.
+	Not all excel spreadsheets can be read into R using read.xls.

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<module xmlns="http://www.openapi.org/2014/" version="0.1">
+	<platform name="R"/>
+	<description><![CDATA[Adds Colour based terms of parliament,
+		scraped from wikipedia]]></description>
+	<output name="nzp" type="internal"/>
+	<source ref="htmlscraper.r"/>
+</module>
