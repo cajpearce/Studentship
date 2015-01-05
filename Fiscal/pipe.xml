@@ -6,18 +6,12 @@
   </description>
 
   <component name="start" ref="inflation.xml" type="module"/>
-  <component name="clean" ref="prettyDF.xml" type="module"/>
   <component name="plot" ref="plotter.xml" type="module"/>
   <component name="Ptterms" ref="htmlscraper.xml" type="module"/>
 
   <pipe>
     <start output="df" component="start"/>
-    <end input="df" component="clean"/>
-  </pipe>
-
-  <pipe>
-    <start output="compact.df" component="clean"/>
-    <end input="compact.df" component="plot"/>
+    <end input="df" component="plot"/>
   </pipe>
 
   <pipe>
