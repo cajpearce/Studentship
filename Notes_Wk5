@@ -1,0 +1,11 @@
+Day 1: finished off fiscal, started drawing in more Govt. spending.
+
+Day 2:
+	Started writing a pipeline for fiscal using just the functions provided
+	in conduit. Seems to be in the correct format (verified by Ashley) but
+	comes up with an error.
+	Error in components[[startComponent]] : invalid subscript type 'list'
+
+	Trying to figure out what's causing it
+
+
