@@ -9,3 +9,6 @@ Day 2:
 	Trying to figure out what's causing it
 
 
+  -	In ?pipe, instructions a bit unclear. Says "name of start component" but
+	could be interpreted as variable name. I didn't realise it meant the
+	character string.

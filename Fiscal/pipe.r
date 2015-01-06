@@ -22,8 +22,8 @@ fiscal.CSV = module(name="fiscal","R",outputs=list(df.out),sources=list(fiscal.r
 scraper = module(name="scraper","R",outputs=list(nzp.out),sources=list(htmlscraper.r))
 plotter = module(name="plotter","R",inputs=list(df.in,nzp.in),sources=list(plotter.r))
 
-p1 = pipe(fiscal.CSV,df.out,plotter,df.in)
-p2 = pipe(scraper,nzp.out,plotter,nzp.in)
+p1 = pipe("fiscal","df","plotter","df")
+p2 = pipe("scraper","nzp","plotter","nzp")
 
 finished = pipeline("itsthefinalpipeline",modules=list(fiscal.CSV,scraper,plotter),
 		pipes=list(p1,p2))
