@@ -99,3 +99,39 @@ check.cache = function(name="alltides.rds",save=name) {
 }
 
 all.tides = check.cache()
+
+
+################################################################################
+# 	CAN SPLIT HERE
+################################################################################
+#	but won't :)
+################################################################################
+
+# Talk to Russell Miller
+
+AUCT.set = all.tides[[which(identifiers == "AUCT")]]
+CHIT.set = all.tides[[which(identifiers == "TAUT")]]
+
+new.AUCT.set = AUCT.set[[1]]
+new.CHIT.set = CHIT.set[[1]]
+
+for(i in 2:7) {
+	new.AUCT.set = rbind(new.AUCT.set,AUCT.set[[i]])
+	new.CHIT.set = rbind(new.CHIT.set,CHIT.set[[i]])
+}
+
+ymin = min(new.AUCT.set$height,new.CHIT.set$height)
+ymax = max(new.AUCT.set$height,new.CHIT.set$height)
+plot(new.AUCT.set$datetime,new.AUCT.set$height,ylim = c(ymin,ymax),type="l")
+lines(new.CHIT.set$datetime,new.CHIT.set$height,col="red")
+
+#tide.ts = ts(new.set$height)
+#plot.ts(tide.ts)
+
+
+#library("TTR")
+
+#new.ts = SMA(tide.ts,n=700)
+#plot.ts(new.ts)
+
+#?stl
