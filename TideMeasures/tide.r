@@ -62,32 +62,40 @@ all.csvs = lapply(identifiers,paste,"_",dates,".csv",sep="")
 # Using code from ManDrought
 # SHOULD ONLY USE THIS ONCE - 304 MB of data, should probably save as RDS.
 
-read.csv.from.zip = function(file.zip,csv.name) {
+read.csv.from.zip = function(file.zip,csv.name,return.as.list=TRUE) {
 	temp = tempfile()
-	measurements = data.frame()
+	measurements = data.frame(id=numeric(0),datetime=numeric(0),height=numeric(0))
 
 	download.file(file.zip,temp,quiet=TRUE)
 	
-	# if it cant be unzipped it just returns an empty dataframe now :D
-	tryCatch(assign("measurements",read.csv(unz(temp,csv.name)),
-			error=function(e) {print(paste("ERROR:",csv.name))},warning=function(w) {})
+	tryCatch({	# This is customised!!! Won't work for individual CSVs
+			measurements = read.csv(unz(temp,csv.name),
+					col.names=c("id","datetime","height"))
+			measurements$datetime = as.POSIXct(measurements$datetime)
+			},
+			error=function(e) {print(paste("ERROR:",file.zip))},
+			warning=function(w) {print(paste("WARNING:",file.zip))})
 
 	unlink(temp)
-	
+
+	if(return.as.list) {
+		measurements = list(measurements)
+	}
 	measurements
 }
 
 vec.read = Vectorize(read.csv.from.zip)
 
-check.cache = function(name="alltides.rds") {
+
+check.cache = function(name="alltides.rds",save=name) {
 	temp = ""
 	if (file.exists(name)) {
 		temp = readRDS(name)
 	} else {
 		temp = mapply(vec.read, all.downloads,all.csvs,SIMPLIFY=FALSE)
-		#saveRDS(temp,name)
+		saveRDS(temp,save)
 	}
 	temp
 }
 
-all.tide.measures = check.cache()
+all.tides = check.cache()
