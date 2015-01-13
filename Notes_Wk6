@@ -1,0 +1,10 @@
+Day 1:
+	Managed to read in all the data from LINZ! stoked
+	Took all of Thurs/Friday last week trying to figure it out.
+	Wasn't working fully properly because I didn't quite understand tryCatch
+	Also struggled because I forgot to turn the data.frames into lists
+
+Day 2:
+	Realising that the data is better as zoo instead of ts
+	This isn't a 'regular' time series. The seasonal effects are contained
+	in the actual data itself. I don't know what these effects are

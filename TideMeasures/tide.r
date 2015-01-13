@@ -60,8 +60,7 @@ all.csvs = lapply(identifiers,paste,"_",dates,".csv",sep="")
 ################################################################################
 
 # Using code from ManDrought
-# SHOULD ONLY USE THIS ONCE - 304 MB of data, should probably save as RDS.
-
+# tryCatch has been customised, otherwise it's pretty universal
 read.csv.from.zip = function(file.zip,csv.name,return.as.list=TRUE) {
 	temp = tempfile()
 	measurements = data.frame(id=numeric(0),datetime=numeric(0),height=numeric(0))
@@ -84,9 +83,12 @@ read.csv.from.zip = function(file.zip,csv.name,return.as.list=TRUE) {
 	measurements
 }
 
+# vectorises it so can be used in mapply in check.cache()
 vec.read = Vectorize(read.csv.from.zip)
 
 
+# because this program reads in 365 * 18 zip files, I'd prefer it be saved
+# checks to see if it can load it from an RDS file first
 check.cache = function(name="alltides.rds",save=name) {
 	temp = ""
 	if (file.exists(name)) {
@@ -107,28 +109,32 @@ all.tides = check.cache()
 #	but won't :)
 ################################################################################
 
-# Talk to Russell Miller
+# at the mo 
+first.set = all.tides[[which(identifiers == "AUCT")]]
+second.set = all.tides[[which(identifiers == "TAUT")]]
 
-AUCT.set = all.tides[[which(identifiers == "AUCT")]]
-CHIT.set = all.tides[[which(identifiers == "TAUT")]]
 
-new.AUCT.set = AUCT.set[[1]]
-new.CHIT.set = CHIT.set[[1]]
+# the following snippit just gets the first 7 days of tides from first & second
 
+# assigns first day
+new.first.set = first.set[[1]]
+new.second.set = second.set[[1]]
+# then iterates through the next 6 days
 for(i in 2:7) {
-	new.AUCT.set = rbind(new.AUCT.set,AUCT.set[[i]])
-	new.CHIT.set = rbind(new.CHIT.set,CHIT.set[[i]])
+	new.first.set = rbind(new.first.set,first.set[[i]])
+	new.second.set = rbind(new.second.set,second.set[[i]])
 }
 
-ymin = min(new.AUCT.set$height,new.CHIT.set$height)
-ymax = max(new.AUCT.set$height,new.CHIT.set$height)
-plot(new.AUCT.set$datetime,new.AUCT.set$height,ylim = c(ymin,ymax),type="l")
-lines(new.CHIT.set$datetime,new.CHIT.set$height,col="red")
 
-#tide.ts = ts(new.set$height)
-#plot.ts(tide.ts)
+# making sure both datasets fit into the same plot
+ymin = min(new.first.set$height,new.second.set$height)
+ymax = max(new.first.set$height,new.second.set$height)
 
+# plot both!
+plot(new.first.set$datetime,new.first.set$height,ylim = c(ymin,ymax),type="l")
+lines(new.second.set$datetime,new.second.set$height,col="red")
 
+# thoughts: 
 #library("TTR")
 
 #new.ts = SMA(tide.ts,n=700)
