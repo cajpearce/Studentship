@@ -8,3 +8,8 @@ Day 2:
 	Realising that the data is better as zoo instead of ts
 	This isn't a 'regular' time series. The seasonal effects are contained
 	in the actual data itself. I don't know what these effects are
+
+
+  -	Should I go back and get rid of the identifier from the datasets, and 
+	add it as the list grabber (column name???)
+
