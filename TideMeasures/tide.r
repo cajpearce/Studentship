@@ -162,7 +162,7 @@ get.extreme.tides = function(tide.set) {
 	middle = mean(ht)
 
 	# to store dates
-	all.extremes = .POSIXct(character(0))
+	all.extremes = numeric(0)
 
 	# are we currently above middle
 	above.middle = ht[1] > middle
@@ -176,7 +176,14 @@ get.extreme.tides = function(tide.set) {
 
 		if ((curr > middle & !above.middle) | (curr < middle & above.middle)) {
 			# at the switch, reset everything
-			all.extremes[length(all.extremes) + 1] = as.POSIXct(curr.extreme.date)
+			
+			# need this logic block to make sure the vector is of
+			# the form POSIXct, not numeric
+			if (length(all.extremes) == 0) {
+				all.extremes = curr.extreme.date
+			} else {
+				all.extremes[length(all.extremes) + 1] = curr.extreme.date
+			}
 			curr.extreme.date = dt[i]
 			curr.extreme = curr
 			above.middle = curr > middle
@@ -186,11 +193,18 @@ get.extreme.tides = function(tide.set) {
 			curr.extreme.date = dt[i]
 		}
 	}
-	all.extremes
+	as.POSIXct(all.extremes)
 }
 
-
+extreme = get.extreme.tides(new.first.set)
 abline(v=get.extreme.tides(new.first.set))
+
+extreme.lag = c(extreme, NA)
+extreme.early = c(extreme[1], extreme)
+extreme.early[1] = NA
+
+print(extreme.lag - extreme.early)
+
 # zooreg(1:5,start=as.POSIXct("2014-01-01 01:00:00"))
 # something to think about
 

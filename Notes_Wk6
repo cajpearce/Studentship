@@ -13,3 +13,13 @@ Day 2:
   -	Should I go back and get rid of the identifier from the datasets, and 
 	add it as the list grabber (column name???)
 
+Day 3:
+> print(extreme.lag - extreme.early)
+Time differences in hours
+ [1]       NA 5.900000 6.433333 6.700000 5.850000 6.316667 6.083333 6.666667
+ [9] 5.933333 6.383333 5.950000 6.650000 5.950000 6.366667 5.816667 6.483333
+[17] 6.300000 6.200000 5.900000 6.433333 6.316667 6.183333 5.766667 6.783333
+[25] 6.100000 6.166667 5.833333       NA
+
+	Not a good sign
+	Means that there isn't a regular pattern to the seasonal data
