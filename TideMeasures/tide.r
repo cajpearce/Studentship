@@ -115,12 +115,12 @@ second.set = all.tides[[which(identifiers == "TAUT")]]
 
 
 # the following snippit just gets the first 7 days of tides from first & second
-
+days = 7
 # assigns first day
 new.first.set = first.set[[1]]
 new.second.set = second.set[[1]]
 # then iterates through the next 6 days
-for(i in 2:7) {
+for(i in 2:days) {
 	new.first.set = rbind(new.first.set,first.set[[i]])
 	new.second.set = rbind(new.second.set,second.set[[i]])
 }
@@ -132,7 +132,7 @@ ymax = max(new.first.set$height,new.second.set$height)
 
 # plot both!
 plot(new.first.set$datetime,new.first.set$height,ylim = c(ymin,ymax),type="l")
-lines(new.second.set$datetime,new.second.set$height,col="red")
+#lines(new.second.set$datetime,new.second.set$height,col="red")
 
 
 ################################################################################
@@ -143,8 +143,15 @@ lines(new.second.set$datetime,new.second.set$height,col="red")
 library(zoo)
 z1 = zoo (new.first.set$height, new.first.set$datetime)
 z2 = zoo (new.second.set$height, new.second.set$datetime)
+
 m = merge(z1, z2)
 
+t1 = ts(new.first.set$height, start = as.numeric(new.first.set$datetime[1]),
+	end = as.numeric(new.first.set$datetime[length(new.first.set$datetime)]),
+	frequency = 60)
+
+library(TSA)
+periodogram(t1)
 
 #plot(m)
 
@@ -195,15 +202,28 @@ get.extreme.tides = function(tide.set) {
 	}
 	as.POSIXct(all.extremes)
 }
-
 extreme = get.extreme.tides(new.first.set)
-abline(v=get.extreme.tides(new.first.set))
 
-extreme.lag = c(extreme, NA)
-extreme.early = c(extreme[1], extreme)
-extreme.early[1] = NA
+#abline(v=get.extreme.tides(new.first.set))
 
-print(extreme.lag - extreme.early)
+first.extreme = extreme[1]
+dt2 = new.first.set$datetime
+cycle.extremes = seq(first.extreme,dt2[length(dt2)],by=89400)
+abline(v=cycle.extremes,lty="dashed")
+
+
+exxxtreme = function() {
+	extreme.lag = c(extreme, NA)
+	extreme.early = c(extreme[1], extreme)
+	extreme.early[1] = NA
+
+	difference = extreme.lag - extreme.earl
+
+	shapiro.test(as.numeric(difference))
+	barplot(as.numeric(difference))
+}
+
+
 
 # zooreg(1:5,start=as.POSIXct("2014-01-01 01:00:00"))
 # something to think about
