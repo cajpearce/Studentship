@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<module version="0.1" xmlns="http://www.openapi.org/2014/">
+	<platform name="python"/>
+	<description><![CDATA[Reads in the RBNZ excel spreadsheet]]></description>
+	<output name="df" type="internal"/>
+	<source ref="inflation.py"/>
+</module>
