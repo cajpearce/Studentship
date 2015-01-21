@@ -1,0 +1,12 @@
+Day 2:
+	Started working on PyGlue
+	Working with namespaces is absolutely awful in python
+	Wondering if it would be easier to not use the namespace
+
+  -	Going to work on using lxml etree
+	Apparently it has better processing regarding namespaces that make more
+	sense :)
+
+  ?	Why are we using namespaces? We're not really using them to any benefit
+  ?	http://www.w3schools.com/xml/xml_namespaces.asp
+
