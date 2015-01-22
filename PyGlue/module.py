@@ -1,4 +1,5 @@
 from lxml import etree
+import subprocess
 
 # read the ElementTree
 tree = etree.parse("test.xml")
@@ -12,35 +13,38 @@ NSMAP = root.nsmap
 # assigns our sole namespace to namespace
 namespace = "{" + NSMAP[None] + "}"
 
-# prints out the XML
-print etree.tostring(root, pretty_print=True)
+
+def readModule(root, namespace):
+	# Get the file that we need to run
+	run_file = root.find(namespace + "source").get("ref")
+
+	# Get the platform
+	platform = root.find(namespace + "platform").get("name")
 
 
-# prints out all the sub-element tags
-for child in root:
-	print child.tag
 
-# prints out whether the root element is an element
-print etree.iselement(root)
+	# get all potential input elements
+	input_elements = root.findall(namespace + "input")
 
-# prints if the root has sub elements
-if len(root):
-	print("The root element has children")
+	# get all potential output elements
+	output_elements = root.findall(namespace + "output")
+
+	for i in input_elements:
+		print i.attrib
+
+	for o in output_elements:
+		print o.attrib
+
+	shell_command = platform + " " + run_file
+	shell_command2 = [platform, run_file]
+	#p = subprocess.Popen(shell_command, 
+	#			shell=True,stdout=subprocess.PIPE)
+
+	#out, err = p.communicate()
+	return subprocess.check_output(shell_command2, shell=True)
 
 
-# testing out the abilities to detect the parent
-print root is root[0].getparent()
+	# Python's call is 'python [file]'
+	# R is 'Rscript [file]'
 
-# testing out navigation
-print root[0] is root[1].getprevious() and root[1] is root[0].getnext()
 
-# prints out root tags (stuff like version)
-print "ROOT KEYS: " +str(root.keys())
-
-# ALTERNATIVE
-attributes_of_root = root.attrib
-
-print "DIRECT KEYS: " + str(attributes_of_root)
-
-# prints out the version hopefully
-print "VERSION: " + str(root.get(root.keys()[0]))
