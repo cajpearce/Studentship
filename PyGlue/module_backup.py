@@ -46,7 +46,7 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 	output_elements = root.findall(namespace + "output")
 
 
-	prepend = []
+	var_transfer = []
 
 	
 	input_name = input_xml.replace(".","_").replace(" ","_")
@@ -56,6 +56,8 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 
 	for index, i in enumerate(input_elements):
 		if i.get("type") == "internal": 
+			position = 0
+			
 			temp_var = input_name + "_" + current_name
 
 			#temp_var += "_" + i.get("name")
@@ -63,7 +65,7 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 
 			temp_var = i.get("name") + " = " + temp_var
 				
-			prepend.append(temp_var)
+			var_transfer.append((temp_var,position))
 
 		elif i.get("type") == "external":
 			warn("You cannot pass variables externally.")
@@ -72,17 +74,18 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 			raise Exception("You have not specified a type for " + 
 					str(i.attrib))
 
-	addend = []
+
 
 	for o in output_elements:
 		if o.get("type") == "internal": 
 			temp_var = current_name + "_" + output_name
+			position = 1
 
 			temp_var += "_" + o.get("name")
 
 			temp_var = o.get("name") + " = " + temp_var
 				
-			addend.append(temp_var)
+			var_transfer.append((temp_var,position))
 
 		elif o.get("type") == "external":
 			warn("You cannot pass variables externally.")
@@ -91,7 +94,7 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 			raise Exception("You have not specified a type for " + 
 					str(o.attrib))
 	
-	line_var_transferer(run_file, prepend, addend)
+
 
         if platform.lower() == "python":
 		pass
@@ -111,28 +114,7 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 		# get variables???
 		# Rscript for R
 
-	#return prepend
-
-def line_var_transferer(filename, add_to_start='\n',add_to_end='\n'):
-        with open(filename, 'r+') as f:
-                content = f.read()
-
-                f.seek(0, 0)
-		write_start = ''
-		if type(add_to_start) is list:
-			write_start = '\n'.join(add_to_start)
-		else:
-			write_start = add_to_start
-
-		write_end = ''
-		if type(add_to_end) is list:
-			write_end = '\n'.join(add_to_end)
-		else:
-			write_end = add_to_end
-
-		f.write(write_start + '\n' + content + '\n' + write_end)
-
-
+	return var_transfer
 
 print("TEST3: " + str(readModule("test3.xml",['CUSTOM_INPUT'])))
 print("NO INPUTS: " + str(readModule("test_no_inputs.xml")))

@@ -3,5 +3,5 @@
 	<platform name="python"/>
 	<description><![CDATA[Adds Colour based on P-Values]]></description>
 	<output name="arty" type="internal"/>
-	<source ref="plotter.py"/>
+	<source ref="plotter_no_inputs.py"/>
 </module>
