@@ -3,21 +3,29 @@ import subprocess # for R
 import importlib  # for python
 import tempfile, shutil, os # for copying files over
 import sys
-
-# read the ElementTree
-tree = etree.parse("test.xml")
-
-#assigns the root element
-root = tree.getroot()
-
-# assigns the namespace dictionary to NSMAP
-NSMAP = root.nsmap
-
-# assigns our sole namespace to namespace
-namespace = "{" + NSMAP[None] + "}"
+from warnings import warn
 
 
-def readModule(root, namespace):
+# Goal is to read all possible modules
+
+
+def readXML(xml_file):
+	# read the ElementTree
+	tree = etree.parse(xml_file)
+
+	# assigns the namespace dictionary to NSMAP
+	NSMAP = tree.getroot().nsmap
+
+	# assigns our sole namespace to namespace
+	namespace = "{" + NSMAP[None] + "}"
+
+	return tree, namespace
+
+def readModule(xml_file, input_xml='INPUT.XML', output_xml='OUTPUT.XML'):
+	
+	tree, namespace = readXML(xml_file)
+	root = tree.getroot()
+
 	# Get the file that we need to run
 	run_file = root.find(namespace + "source").get("ref")
 
@@ -32,34 +40,62 @@ def readModule(root, namespace):
 	# get all potential output elements
 	output_elements = root.findall(namespace + "output")
 
+
+	prepend = []
+
+	
+	input_name = input_xml.replace(".","_").replace(" ","_")
+	output_name = output_xml.replace(".","_").replace(" ","_")
+	current_name = xml_file.replace(".","_").replace(" ","_")
+	
+	all_elements = input_elements+output_elements
+
 	for i in input_elements:
-		print i.attrib
+		if i.get("type") == "internal": 
+			temp_var = input_name + "_" + current_name
+			temp_var += "_" + i.get("name")
+			temp_var = i.get("name") + " = " + temp_var
+			prepend.append(temp_var)
+
+		elif i.get("type") == "external":
+			warn("You cannot pass variables externally.")
+		else:
+			# will be raised when a tag is not specified
+			raise Exception("You have not specified a type for " + 
+					str(i.attrib))
+
+	print prepend
+	append = []
 
 	for o in output_elements:
-		print o.attrib
-
+		pass
         run = None
+	
+
         if platform.lower() == "python":
-                # use copy file to temp...
+		pass
+                #TODO: make this work
+                #temp = copy_file_to_temp_directory(run_file,"hello","bye")
+                #run = importlib.import_module(temp)
+	else:
+		pass
+		#TODO: make this work
+		#shell_command = platform + " " + run_file
+		#shell_command2 = [platform, run_file]
+		#p = subprocess.Popen(shell_command, 
+		#			shell=True,stdout=subprocess.PIPE)
 
-                temp = copy_file_to_temp_directory(run_file,"hello","bye")
-                
-                run = importlib.import_module(temp)
-
-        # get variables???
-        print [item for item in dir(adfix) if not item.startswith("__")]
-        
-	#shell_command = platform + " " + run_file
-	#shell_command2 = [platform, run_file]
-	#p = subprocess.Popen(shell_command, 
-	#			shell=True,stdout=subprocess.PIPE)
-
-	#out, err = p.communicate()
-	#return subprocess.check_output(shell_command2, shell=True)
+		#out, err = p.communicate()
+		#return subprocess.check_output(shell_command2, shell=True)
+		# get variables???
+		# Rscript for R
 
 
-	# Python's call is 'python [file]'
-	# R is 'Rscript [file]'
+
+readModule("test2.xml")
+
+
+
 
 
 def line_prepender(filename, line):
@@ -88,7 +124,8 @@ def copy_file_to_temp_directory(path,append_to_start='',append_to_end=''):
         # adds the temp directory to the system path to make it easier to import
         # does that mean I'll need to change the 
         sys.path.append(temp_dir)
-        if len(append_to_start) > 0 or len(append_to_end) < 0:
+        
+#if len(append_to_start) > 0 or len(append_to_end) < 0:
                 #do something fucking cool here m8
                          
         return temp_path
