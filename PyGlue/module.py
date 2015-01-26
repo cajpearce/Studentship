@@ -21,7 +21,7 @@ def readXML(xml_file):
 
 	return tree, namespace
 
-def readModule(xml_file, input_xml='INPUT.XML', output_xml='OUTPUT.XML'):
+def readModule(xml_file, input_var_names=list(), input_xml='INPUT.XML', output_xml='OUTPUT.XML'):
 	
 	tree, namespace = readXML(xml_file)
 	root = tree.getroot()
@@ -37,6 +37,8 @@ def readModule(xml_file, input_xml='INPUT.XML', output_xml='OUTPUT.XML'):
 	# get all potential input elements
 	input_elements = root.findall(namespace + "input")
 
+	if len(input_elements) != len(input_var_names):
+		raise Exception("You have not provided valid input var names.")
 	# get all potential output elements
 	output_elements = root.findall(namespace + "output")
 
@@ -50,12 +52,23 @@ def readModule(xml_file, input_xml='INPUT.XML', output_xml='OUTPUT.XML'):
 	
 	all_elements = input_elements+output_elements
 
-	for i in input_elements:
+	for index, i in enumerate(all_elements):
 		if i.get("type") == "internal": 
-			temp_var = input_name + "_" + current_name
+			temp_var = ''
+			position = 0
+			
+			if i.tag == namespace + "input":
+				temp_var = input_name + "_" + current_name
+			elif i.tag == namespace + "output":
+				temp_var = current_name + "_" + output_name
+				position = 1
+			else:
+				raise Exception("No input/output tag??")
+
 			temp_var += "_" + i.get("name")
 			temp_var = i.get("name") + " = " + temp_var
-			prepend.append(temp_var)
+				
+			prepend.append((temp_var,position))
 
 		elif i.get("type") == "external":
 			warn("You cannot pass variables externally.")
@@ -65,11 +78,7 @@ def readModule(xml_file, input_xml='INPUT.XML', output_xml='OUTPUT.XML'):
 					str(i.attrib))
 
 	print prepend
-	append = []
 
-	for o in output_elements:
-		pass
-        run = None
 	
 
         if platform.lower() == "python":

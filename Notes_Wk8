@@ -1,0 +1,15 @@
+Day 1:
+	Auckland Anniversary!
+
+Day 2:
+	Struggling at the thought of passing variables across
+	Currently have a list with assignment, and position (0 = start, 1 = end)
+  -	[  ('df = INPUT_XML_test2_xml_df', 0), 
+	('arty = test2_xml_OUTPUT_XML_arty', 1)]
+	
+	Taken from test3.xml
+	However, in the OpenAPI system, you don't need to keep variable names
+	consistent, so will have to edit this to make sure that you can pass
+	variable names across
+
+

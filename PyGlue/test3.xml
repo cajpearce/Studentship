@@ -3,6 +3,9 @@
 	<platform name="python"/>
 	<description><![CDATA[Adds Colour based on P-Values]]></description>
 	<input name="df" type="internal"/>
+	<input name="nzp" type="internal"/>
+	<input name="colours" type="internal"/>
+	<output name="plot" type="external" ref="foo.png"/>
 	<output name="arty" type="internal"/>
 	<source ref="plotter.py"/>
 </module>
