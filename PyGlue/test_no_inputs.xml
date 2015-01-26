@@ -2,7 +2,6 @@
 <module xmlns="http://www.openapi.org/2014/" version="0.1">
 	<platform name="python"/>
 	<description><![CDATA[Adds Colour based on P-Values]]></description>
-	<input name="df" type="internal"/>
 	<output name="arty" type="internal"/>
 	<source ref="plotter.py"/>
 </module>
