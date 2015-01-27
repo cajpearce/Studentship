@@ -73,14 +73,17 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 					str(i.attrib))
 
 	addend = []
+	output_variable_names = []
 
 	for o in output_elements:
 		if o.get("type") == "internal": 
+			output_variable_names.append(o.get("name"))
+
 			temp_var = current_name + "_" + output_name
 
 			temp_var += "_" + o.get("name")
 
-			temp_var = o.get("name") + " = " + temp_var
+			temp_var += " = " + o.get("name")
 				
 			addend.append(temp_var)
 
@@ -111,7 +114,7 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 		# get variables???
 		# Rscript for R
 
-	#return prepend
+	return output_variable_names
 
 def line_var_transferer(filename, add_to_start='\n',add_to_end='\n'):
         with open(filename, 'r+') as f:
@@ -129,8 +132,11 @@ def line_var_transferer(filename, add_to_start='\n',add_to_end='\n'):
 			write_end = '\n'.join(add_to_end)
 		else:
 			write_end = add_to_end
+		
+		prior = "\n# the previous are importing from another module\n"
+		follow = "\n# the following are exporting to another module\n"
 
-		f.write(write_start + '\n' + content + '\n' + write_end)
+		f.write(write_start + prior + content + follow + write_end)
 
 
 

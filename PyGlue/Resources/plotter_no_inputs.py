@@ -1,4 +1,3 @@
-df = INPUT_XML_test3_xml_CUSTOM_INPUT
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -77,5 +76,3 @@ lo = lowess(compact.df$USD, f = (12*years)/length(compact.df$Date))
 lines(index(compact.df$USD),lo$y,lwd=4,col="green")
 #dev.off()
 '''
-
-arty = test3_xml_OUTPUT_XML_arty
