@@ -7,5 +7,5 @@
 	<input name="colours" type="internal"/>
 	<!--output name="plot" type="external" ref="foo.png"/-->
 	<output name="arty" type="internal"/>
-	<source ref="plotter.py"/>
+	<source ref="test.py"/>
 </module>

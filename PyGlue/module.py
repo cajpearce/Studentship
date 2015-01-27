@@ -140,9 +140,8 @@ def line_var_transferer(filename, add_to_start='\n',add_to_end='\n'):
 
 
 
-print("TEST3: " + str(readModule("test3.xml",['CUSTOM_INPUT'])))
-print("NO INPUTS: " + str(readModule("test_no_inputs.xml")))
-
+print("TEST: " + str(readModule("test.xml",
+		['CUSTOM_DF','CUSTOM_NZP','CUSTOM_COLOURS'])))
 
 
 
