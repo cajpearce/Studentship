@@ -30,13 +30,18 @@ def readPipeline(xml_file):
 
 	all_pipes = root.findall(namespace + "pipe")
 	
-	pipe_graph = create_graph(all_pipes, namespace)
+	pipe_graph = dict()
+
+	# populate the pattern dictionary so that we know what each node is
+	for key in component_dictionary:
+		pipe_graph[key] = []
+
+	print create_graph(all_pipes, namespace, pipe_graph)
 
 	print find_all_paths(pipe_graph, 'start', 'plot')
 
 
-def create_graph(all_pipes, namespace):
-	ret_dict = dict()
+def create_graph(all_pipes, namespace, ret_dict = dict()):
 	
 	for pipe in all_pipes:
 		start = pipe.find(namespace + "start")
@@ -53,8 +58,8 @@ def create_graph(all_pipes, namespace):
 
 	return ret_dict
 
-def find_all_paths
-def find_all_paths_for_nodes(graph, start, end, path=[]):
+def find_all_paths(graph, start, end, path=[]):
+	# rewrite this so that it can find LITERALLY all paths manually
 	'''
 	https://www.python.org/doc/essays/graphs/
 	'''
