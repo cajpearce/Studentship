@@ -4,7 +4,8 @@ import importlib  # for python
 import tempfile, shutil, os # for copying files over
 import sys
 from warnings import warn
-
+from topological_sort import sort_topologically
+import module
 
 def readXML(xml_file):
 	# read the ElementTree
@@ -22,24 +23,53 @@ def readPipeline(xml_file):
 	'''
 	Currently you need to provide a list
 	'''
+	# read in the xml Tree
 	tree, namespace = readXML(xml_file)
 	root = tree.getroot()
-
-	all_components = root.findall(namespace + "component")
-	component_dictionary = create_component_dictionary(all_components)
-
-	all_pipes = root.findall(namespace + "pipe")
 	
-	pipe_graph = dict()
+	# just gets all the COMPONENTS
+	all_components = root.findall(namespace + "component")
+
+	# creates a dictionary
+	# really simply, just maps m1 to module1.xml
+	# will use these later to know which modules to run!
+	component_dictionary = create_component_dictionary(all_components)
+	# LATER MATE
+
+
+	# this finds all the pipe connections. Each pipe contains sub-elements
+	all_pipes = root.findall(namespace + "pipe")
+
+	for p in all_pipes:
+		print etree.tostring(p,pretty_print=True)
+
+	# create an empty dictionary, this will store the NODE GRAPH
+	pipe_node_graph = dict()
 
 	# populate the pattern dictionary so that we know what each node is
 	for key in component_dictionary:
-		pipe_graph[key] = []
+		pipe_node_graph[key] = []
 
-	print create_graph(all_pipes, namespace, pipe_graph)
 
-	print find_all_paths(pipe_graph, 'start', 'plot')
+	# THIS WORKS IN PLACE
+	# pipe_node_graph gets changed IN PLACE!!!!
+	create_graph(all_pipes, namespace, pipe_node_graph)
+	
 
+	topograph = sort_topologically(pipe_node_graph)
+	
+	# put it in order of INPUT to OUTPUT	
+	topograph.reverse()
+
+	
+	print "ALL_PIPES " + str(pipe_node_graph)
+	print "DIRECTION " + str(topograph)
+	
+	return topograph
+
+
+def recursive_read_pipeline(topograph, current_index):
+	pass
 
 def create_graph(all_pipes, namespace, ret_dict = dict()):
 	
@@ -47,34 +77,20 @@ def create_graph(all_pipes, namespace, ret_dict = dict()):
 		start = pipe.find(namespace + "start")
 		end = pipe.find(namespace + "end")
 		
-		o = start.get("component")
-		i = end.get("component")
-		if o in ret_dict:
+		o_component = start.get("component")
+		i_component = end.get("component")
+
+		o_variable = start.get("output")
+		i_variable = end.get("input")
+
+		if o_component in ret_dict:
 			# append to existing array
-		        ret_dict[o].append(i)
+		        ret_dict[o_component].append(i_component)
 		else:
 			# create a new array in this slot
-			ret_dict[o] = [i]
+			ret_dict[o_component] = [i_component]
 
 	return ret_dict
-
-def find_all_paths(graph, start, end, path=[]):
-	# rewrite this so that it can find LITERALLY all paths manually
-	'''
-	https://www.python.org/doc/essays/graphs/
-	'''
-	path = path + [start]
-	if start == end:
-		return [path]
-	if not graph.has_key(start):
-		return []
-	paths = []
-	for node in graph[start]:
-		if node not in path:
-			newpaths = find_all_paths(graph, node, end, path)
-			for newpath in newpaths:
-				paths.append(newpath)
-        return paths
 
 
 def create_component_dictionary(elements):
@@ -92,4 +108,4 @@ def create_component_dictionary(elements):
 			ret_dict[key] = reference
 	return ret_dict
 
-readPipeline("pipe.xml")
+y = readPipeline("pipe.xml")

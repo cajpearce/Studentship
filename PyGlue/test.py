@@ -1,7 +1,3 @@
-df = INPUT_XML_test_xml_CUSTOM_DF
-nzp = INPUT_XML_test_xml_CUSTOM_NZP
-colours = INPUT_XML_test_xml_CUSTOM_COLOURS
-# the previous are importing from another module
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -80,6 +76,3 @@ lo = lowess(compact.df$USD, f = (12*years)/length(compact.df$Date))
 lines(index(compact.df$USD),lo$y,lwd=4,col="green")
 #dev.off()
 '''
-
-# the following are exporting to another module
-test_xml_OUTPUT_XML_arty = arty

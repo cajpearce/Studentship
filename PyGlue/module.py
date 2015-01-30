@@ -94,33 +94,15 @@ def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', out
 			raise Exception("You have not specified a type for " + 
 					str(o.attrib))
 	
-	line_var_transferer(run_file, prepend, addend)
-
-        if platform.lower() == "python":
-		pass
-                #TODO: make this work
-                #temp = copy_file_to_temp_directory(run_file,"hello","bye")
-                #run = importlib.import_module(temp)
-	else:
-		pass
-		#TODO: make this work
-		#shell_command = platform + " " + run_file
-		#shell_command2 = [platform, run_file]
-		#p = subprocess.Popen(shell_command, 
-		#			shell=True,stdout=subprocess.PIPE)
-
-		#out, err = p.communicate()
-		#return subprocess.check_output(shell_command2, shell=True)
-		# get variables???
-		# Rscript for R
-
-	return output_variable_names
+	ret = line_var_transferer(run_file, prepend, addend)
+	return ret
 
 def line_var_transferer(filename, add_to_start='\n',add_to_end='\n'):
+	ret = ''
         with open(filename, 'r+') as f:
                 content = f.read()
 
-                f.seek(0, 0)
+                #f.seek(0, 0)
 		write_start = ''
 		if type(add_to_start) is list:
 			write_start = '\n'.join(add_to_start)
@@ -136,11 +118,15 @@ def line_var_transferer(filename, add_to_start='\n',add_to_end='\n'):
 		prior = "\n# the previous are importing from another module\n"
 		follow = "\n# the following are exporting to another module\n"
 
-		f.write(write_start + prior + content + follow + write_end)
+		#f.write(write_start + prior + content + follow + write_end)
+		
+		ret = write_start + prior + content + follow + write_end
+	return ret
 
 
 
-print("TEST: " + str(readModule("test.xml",
+if __name__ == "__main__":
+	print("TEST: " + str(readModule("test.xml",
 		['CUSTOM_DF','CUSTOM_NZP','CUSTOM_COLOURS'])))
 
 

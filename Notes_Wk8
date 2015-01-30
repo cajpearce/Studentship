@@ -13,3 +13,24 @@ Day 2:
 	variable names across
 
 
+Day 4:
+	My birthday!
+	
+  -	Discussed with Paul - 2 issues
+  1.	Modules that extend plots
+	Impossible to implement at the moment, without enforcing ggplot2
+	Need some way to figure out how to pass plots around
+  2.	Empty pipes - having pipes without variable definitions
+
+  -	IMPORTANT - next update.
+	Need to imitate rm(list=ls()) after assigning variables in python
+
+Day 5:
+Thought process:
+  -	Pipeline needs to get 'start' modules
+	From module, need to get inputs, if none, get outputs and pass back to
+	function for recursive behaviour
+	Also need to use the pipes???
+
+	So, topographic sort gives the order
+	Component_dict gives the connections
