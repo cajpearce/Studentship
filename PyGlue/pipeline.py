@@ -51,8 +51,8 @@ def readPipeline(xml_file):
 	topograph.reverse()
 
 	
-	print "ALL_PIPES " + str(pipe_node_graph)
-	print "DIRECTION " + str(topograph)
+	#print "ALL_PIPES " + str(pipe_node_graph)
+	#print "DIRECTION " + str(topograph)
 	
 	return topograph
 
@@ -61,23 +61,22 @@ def recursive_read_pipeline(topograph, current_index):
 	pass
 
 def create_graph(all_pipes, namespace, ret_dict = dict()):
-	
+	# this works fine
+	# keep in mind that it is always going to be a linear process
+	# getting the input variables will be the long term job
 	for pipe in all_pipes:
 		start = pipe.find(namespace + "start")
 		end = pipe.find(namespace + "end")
 		
-		o_component = start.get("component")
-		i_component = end.get("component")
+		o = start.get("component")
+		i = end.get("component")
 
-		o_variable = start.get("output")
-		i_variable = end.get("input")
-
-		if (o_component,o_variable) in ret_dict:
+		if o in ret_dict:
 			# append to existing array
-		        ret_dict[o_component,o_variable].append((i_component, i_variable))
+		        ret_dict[o].append(i)
 		else:
 			# create a new array in this slot
-			ret_dict[o_component,o_variable] = [(i_component, i_variable)]
+			ret_dict[o] = [i]
 
 	return ret_dict
 
@@ -97,4 +96,13 @@ def create_component_dictionary(elements):
 			ret_dict[key] = reference
 	return ret_dict
 
-y = readPipeline("pipe.xml")
+
+simple_pipe  = readPipeline("simple_pipe.xml")
+complex_pipe = readPipeline("complex_pipe.xml")
+#my_pipe = readPipeline("my_pipe.xml")
+
+for i, direction in enumerate(simple_pipe):
+	print str(i + 1) + ":"
+	for p in direction:
+		print str(p) + " ",
+	print
