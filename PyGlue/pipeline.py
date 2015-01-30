@@ -40,20 +40,9 @@ def readPipeline(xml_file):
 	# this finds all the pipe connections. Each pipe contains sub-elements
 	all_pipes = root.findall(namespace + "pipe")
 
-	for p in all_pipes:
-		print etree.tostring(p,pretty_print=True)
 
-	# create an empty dictionary, this will store the NODE GRAPH
-	pipe_node_graph = dict()
-
-	# populate the pattern dictionary so that we know what each node is
-	for key in component_dictionary:
-		pipe_node_graph[key] = []
-
-
-	# THIS WORKS IN PLACE
-	# pipe_node_graph gets changed IN PLACE!!!!
-	create_graph(all_pipes, namespace, pipe_node_graph)
+	# create the directioned node graph and assigns it to a dictionary
+	pipe_node_graph = create_graph(all_pipes, namespace)
 	
 
 	topograph = sort_topologically(pipe_node_graph)
@@ -83,12 +72,12 @@ def create_graph(all_pipes, namespace, ret_dict = dict()):
 		o_variable = start.get("output")
 		i_variable = end.get("input")
 
-		if o_component in ret_dict:
+		if (o_component,o_variable) in ret_dict:
 			# append to existing array
-		        ret_dict[o_component].append(i_component)
+		        ret_dict[o_component,o_variable].append((i_component, i_variable))
 		else:
 			# create a new array in this slot
-			ret_dict[o_component] = [i_component]
+			ret_dict[o_component,o_variable] = [(i_component, i_variable)]
 
 	return ret_dict
 
