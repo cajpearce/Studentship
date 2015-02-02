@@ -34,3 +34,7 @@ Thought process:
 
 	So, topographic sort gives the order
 	Component_dict gives the connections
+
+
+  -	FIRST Hurdle - was assuming there was only one input and output module
+

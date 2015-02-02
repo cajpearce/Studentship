@@ -8,44 +8,47 @@ from warnings import warn
 
 # Goal is to read all possible modules
 
+class Module:
+	def __init__(self, xml_file):
+		self.xml_file = xml_file
 
-def readXML(xml_file):
-	# read the ElementTree
-	tree = etree.parse(xml_file)
+		self.setup_tree()
+		self.setup_namespace()	
+		self.setup_root()
 
-	# assigns the namespace dictionary to NSMAP
-	NSMAP = tree.getroot().nsmap
+		self.parse_information_from_xml()
+	def setup_tree(self):
+		self.tree = etree.parse(self.xml_file)
 
-	# assigns our sole namespace to namespace
-	namespace = "{" + NSMAP[None] + "}"
+		return self.tree
 
-	return tree, namespace
+	def setup_namespace(self):
+		temp_namespace = self.tree.getroot().nsmap
+		#formats it properly and assigns it to self
+		self.namespace = "{" + temp_namespace[None] + "}"
 
-def readModule(xml_file, input_variable_names=list(), input_xml='INPUT.XML', output_xml='OUTPUT.XML'):
-	'''
-	Currently you need to provide a list
-	'''
-	tree, namespace = readXML(xml_file)
-	root = tree.getroot()
+		return self.namespace
 
-	# Get the file that we need to run
-	run_file = root.find(namespace + "source").get("ref")
+	def setup_root(self):
+		self.root = self.tree.getroot()
+		return self.root
 
-	# Get the platform
-	platform = root.find(namespace + "platform").get("name")
-
-
-
-	# get all potential input elements
-	input_elements = root.findall(namespace + "input")
-
-	if len(input_variable_names) != len(input_elements):
-		raise Exception("You have provided incorrect input variables")
-
-	# get all potential output elements
-	output_elements = root.findall(namespace + "output")
+	def parse_information_from_xml(self):
+		self.source_file = self.search_inside_tag("source","ref")
+		self.platform = self.search_inside_tag("platform","name")
+		self.inputs = self.root.findall(self.namespace + "input")
+		self.outputs = self.root.findall(self.namespace + "output")
 
 
+	def search_inside_tag(self, tag, attribute):
+		return self.root.find(self.namespace + tag).get(attribute)
+	
+	def __str__(self):
+		return etree.tostring(self.tree,pretty_print=True)
+
+
+def createWrittenFile():
+	
 	prepend = []
 
 	
@@ -125,9 +128,11 @@ def line_var_transferer(filename, add_to_start='\n',add_to_end='\n'):
 
 
 
-if __name__ == "__main__":
-	print("TEST: " + str(readModule("test.xml",
-		['CUSTOM_DF','CUSTOM_NZP','CUSTOM_COLOURS'])))
+#if __name__ == "__main__":
+x = Module("test.xml")
+print(str(x))
+#	print("TEST: " + str(readModule("test.xml",
+#		['CUSTOM_DF','CUSTOM_NZP','CUSTOM_COLOURS'])))
 
 
 

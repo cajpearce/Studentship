@@ -34,33 +34,37 @@ def readPipeline(xml_file):
 	# really simply, just maps m1 to module1.xml
 	# will use these later to know which modules to run!
 	component_dictionary = create_component_dictionary(all_components)
-	# LATER MATE
 
 
 	# this finds all the pipe connections. Each pipe contains sub-elements
 	all_pipes = root.findall(namespace + "pipe")
 
-
 	# create the directioned node graph and assigns it to a dictionary
-	pipe_node_graph = create_graph(all_pipes, namespace)
+	# at the same time (because why not) create a dictionary of all connections
+	pipe_node_graph, save_direction = create_graph(all_pipes, namespace)
 	
 
+	# create the directions
 	topograph = sort_topologically(pipe_node_graph)
 	
 	# put it in order of INPUT to OUTPUT	
 	topograph.reverse()
 
-	
-	#print "ALL_PIPES " + str(pipe_node_graph)
-	#print "DIRECTION " + str(topograph)
-	
-	return topograph
 
+	########################################################################
+	# that was the set up
+	# now we have the topograph: directions
+	# we have the component_dictionary: refering to the actual xml file name
+	# we have the save_direction: refers to inputs
+
+	return save_direction
 
 def recursive_read_pipeline(topograph, current_index):
 	pass
 
 def create_graph(all_pipes, namespace, ret_dict = dict()):
+
+	save_direction = dict()
 	# this works fine
 	# keep in mind that it is always going to be a linear process
 	# getting the input variables will be the long term job
@@ -68,18 +72,29 @@ def create_graph(all_pipes, namespace, ret_dict = dict()):
 		start = pipe.find(namespace + "start")
 		end = pipe.find(namespace + "end")
 		
-		o = start.get("component")
-		i = end.get("component")
+		o_component = start.get("component")
+		i_component = end.get("component")
+		
+		o_variable = start.get("output")
+		i_variable = end.get("input")
 
-		if o in ret_dict:
+		save_direction[(i_component, i_variable)] = (o_component, o_variable)
+
+		if o_component in ret_dict:
 			# append to existing array
-		        ret_dict[o].append(i)
+		        ret_dict[o_component].append(i_component)
 		else:
 			# create a new array in this slot
-			ret_dict[o] = [i]
+			ret_dict[o_component] = [i_component]
 
-	return ret_dict
+	return ret_dict, save_direction
 
+def populate_inputs_and_outputs(full_directions):
+	pass	
+	#inputs = dict()
+	#outputs = dict()
+
+	#xml_file, input_variable_names=list(), input_xml='INPUT.XML', output_xml='OUTPUT.XML'
 
 def create_component_dictionary(elements):
 	'''
@@ -98,11 +113,13 @@ def create_component_dictionary(elements):
 
 
 simple_pipe  = readPipeline("simple_pipe.xml")
-complex_pipe = readPipeline("complex_pipe.xml")
+#complex_pipe = readPipeline("complex_pipe.xml")
 #my_pipe = readPipeline("my_pipe.xml")
 
-for i, direction in enumerate(simple_pipe):
-	print str(i + 1) + ":"
-	for p in direction:
-		print str(p) + " ",
-	print
+#for i_component, direction in enumerate(simple_pipe):
+#	print str(i_component + 1) + ":"
+#	for p in direction:
+#		print str(p) + " ",
+#	print
+
+
