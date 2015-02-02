@@ -1,7 +1,8 @@
 from lxml import etree
 from warnings import warn
 from topological_sort import sort_topologically
-
+import os
+#import module
 
 class Pipeline:
 	def __init__(self, xml_file):
@@ -12,6 +13,7 @@ class Pipeline:
 		self.setup_root()
 
 		self.parse_information_from_xml()
+		self.read_in_modules()
 
 	def setup_tree(self):
 		self.tree = etree.parse(self.xml_file)
@@ -29,8 +31,7 @@ class Pipeline:
 		self.root = self.tree.getroot()
 		return self.root
 
-	# above completed
-	
+	# above completed		
 	def parse_information_from_xml(self):
 		self.components = self.root.findall(self.namespace+"component")
 		self.pipes = self.root.findall(self.namespace + "pipe")
@@ -43,9 +44,17 @@ class Pipeline:
 		
 		################################################################
 		# now we have the module_order: directions
-		# we have the components_dict
 		# we have the variable_pipe_links: refers to inputs
 	
+	def read_in_modules(self):
+		self.modules = []
+		for c in self.components:
+			if c.get('type') == 'module':
+				file_name = c.get('ref')
+				print file_name
+				self.modules.append(Module(file_name))
+
+
 	def create_component_dictionary(self):
 		# creates a dictionary
 		# really simply, just maps m1 to module1.xml
@@ -68,13 +77,16 @@ class Pipeline:
 		
 			o_component = start.get("component")
 			i_component = end.get("component")
-			# TODO
+			
+			o_component = self.components_dict[o_component]
+			i_component = self.components_dict[i_component]
+
 			o_variable = start.get("output")
 			i_variable = end.get("input")
 
 			pipe_links[(i_component, i_variable)] = (o_component, o_variable)
 
-			if o_component in ret_dict:
+			if o_component in graph:
 				# append to existing array
 				graph[o_component].append(i_component)
 			else:
@@ -82,5 +94,84 @@ class Pipeline:
 				graph[o_component] = [i_component]
 
 		return graph, pipe_links
+
+
+class Module:
+	def __init__(self, xml_file):
+		if not os.path.isfile(xml_file):
+			raise IOError("That is not a file you fucking jerk.")
+
+		self.xml_file = xml_file
+
+		self.setup_tree()
+		self.setup_namespace()	
+		self.setup_root()
+
+		self.parse_information_from_xml()
+	def setup_tree(self):
+		self.tree = etree.parse(self.xml_file)
+
+		return self.tree
+
+	def setup_namespace(self):
+		temp_namespace = self.tree.getroot().nsmap
+		#formats it properly and assigns it to self
+		self.namespace = "{" + temp_namespace[None] + "}"
+
+		return self.namespace
+
+	def setup_root(self):
+		self.root = self.tree.getroot()
+		return self.root
+
+	def parse_information_from_xml(self):
+		self.source_file = self.search_inside_tag("source","ref")
+		self.platform = self.search_inside_tag("platform","name")
+		self.inputs = []
+		for i in self.root.findall(self.namespace + "input"):
+			self.inputs.append(Input(i))
+		self.outputs = []
+		for o in self.root.findall(self.namespace + "output"):
+			self.outputs.append(Output(i))
+
+
+	def search_inside_tag(self, tag, attribute):
+		return self.root.find(self.namespace + tag).get(attribute)
+	
+	def __str__(self):
+		return etree.tostring(self.tree,pretty_print=True)
+
+	def incoming_pipe(self, other):
+		pass
+		#TODO
+	def outgoing_pipe(self, other):
+		pass
+		# TODO
+
+		#('plot', 'df'): ('start', 'df')
+
+
+class Var:
+	def __init__(self, element):
+		self.breakdown_element(element)
+
+	def breakdown_element(self, e):
+		self.variable_type = e.get("type")
+		self.variable_name = e.get("name")
+
+	def is_internal(self):
+		return self.variable_type == "internal"
+
+	def __str__(self):
+		return self.variable_name + "--|--" + self.variable_type
+
+class Input(Var):
+	# Easy wrapper
+	pass	
+
+class Output(Var):
+	# Easy wrapper
+	pass
+
 
 simple_pipe  = Pipeline("simple_pipe.xml")

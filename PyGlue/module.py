@@ -10,6 +10,11 @@ from warnings import warn
 
 class Module:
 	def __init__(self, xml_file):
+		if not os.path.isfile(xml_file):
+			print "hi"
+#			raise Exception("That is not a file you fucking jerk.")
+		else:
+			print "bye"
 		self.xml_file = xml_file
 
 		self.setup_tree()
