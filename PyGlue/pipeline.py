@@ -1,125 +1,86 @@
 from lxml import etree
-import subprocess # for R
-import importlib  # for python
-import tempfile, shutil, os # for copying files over
-import sys
 from warnings import warn
 from topological_sort import sort_topologically
-import module
 
-def readXML(xml_file):
-	# read the ElementTree
-	tree = etree.parse(xml_file)
 
-	# assigns the namespace dictionary to NSMAP
-	NSMAP = tree.getroot().nsmap
+class Pipeline:
+	def __init__(self, xml_file):
+		self.xml_file = xml_file
 
-	# assigns our sole namespace to namespace
-	namespace = "{" + NSMAP[None] + "}"
+		self.setup_tree()
+		self.setup_namespace()	
+		self.setup_root()
 
-	return tree, namespace
+		self.parse_information_from_xml()
 
-def readPipeline(xml_file):
-	'''
-	Currently you need to provide a list
-	'''
-	# read in the xml Tree
-	tree, namespace = readXML(xml_file)
-	root = tree.getroot()
+	def setup_tree(self):
+		self.tree = etree.parse(self.xml_file)
+
+		return self.tree
+
+	def setup_namespace(self):
+		temp_namespace = self.tree.getroot().nsmap
+		#formats it properly and assigns it to self
+		self.namespace = "{" + temp_namespace[None] + "}"
+
+		return self.namespace
+
+	def setup_root(self):
+		self.root = self.tree.getroot()
+		return self.root
+
+	# above completed
 	
-	# just gets all the COMPONENTS
-	all_components = root.findall(namespace + "component")
-
-	# creates a dictionary
-	# really simply, just maps m1 to module1.xml
-	# will use these later to know which modules to run!
-	component_dictionary = create_component_dictionary(all_components)
+	def parse_information_from_xml(self):
+		self.components = self.root.findall(self.namespace+"component")
+		self.pipes = self.root.findall(self.namespace + "pipe")
 
 
-	# this finds all the pipe connections. Each pipe contains sub-elements
-	all_pipes = root.findall(namespace + "pipe")
-
-	# create the directioned node graph and assigns it to a dictionary
-	# at the same time (because why not) create a dictionary of all connections
-	pipe_node_graph, save_direction = create_graph(all_pipes, namespace)
-	
-
-	# create the directions
-	topograph = sort_topologically(pipe_node_graph)
-	
-	# put it in order of INPUT to OUTPUT	
-	topograph.reverse()
-
-
-	########################################################################
-	# that was the set up
-	# now we have the topograph: directions
-	# we have the component_dictionary: refering to the actual xml file name
-	# we have the save_direction: refers to inputs
-
-	return save_direction
-
-def recursive_read_pipeline(topograph, current_index):
-	pass
-
-def create_graph(all_pipes, namespace, ret_dict = dict()):
-
-	save_direction = dict()
-	# this works fine
-	# keep in mind that it is always going to be a linear process
-	# getting the input variables will be the long term job
-	for pipe in all_pipes:
-		start = pipe.find(namespace + "start")
-		end = pipe.find(namespace + "end")
+		self.components_dict = self.create_component_dictionary()
+		graph, self.variable_pipe_links = self.create_graphs()		
+		self.module_order = sort_topologically(graph)
+		self.module_order.reverse()
 		
-		o_component = start.get("component")
-		i_component = end.get("component")
-		
-		o_variable = start.get("output")
-		i_variable = end.get("input")
-
-		save_direction[(i_component, i_variable)] = (o_component, o_variable)
-
-		if o_component in ret_dict:
-			# append to existing array
-		        ret_dict[o_component].append(i_component)
-		else:
-			# create a new array in this slot
-			ret_dict[o_component] = [i_component]
-
-	return ret_dict, save_direction
-
-def populate_inputs_and_outputs(full_directions):
-	pass	
-	#inputs = dict()
-	#outputs = dict()
-
-	#xml_file, input_variable_names=list(), input_xml='INPUT.XML', output_xml='OUTPUT.XML'
-
-def create_component_dictionary(elements):
-	'''
-	Components are essentially reference pointers - x points to the xml file
-	As such they are easily represented in the form of a dictionary
-	This function creates the dictionary for easy access
-	'''
-	ret_dict = dict()
-	for component in elements:
-		if component.get('type') == "module":
-			key = component.get('name')
-			reference = component.get('ref')
+		################################################################
+		# now we have the module_order: directions
+		# we have the components_dict
+		# we have the variable_pipe_links: refers to inputs
+	
+	def create_component_dictionary(self):
+		# creates a dictionary
+		# really simply, just maps m1 to module1.xml
+		ret_dict = dict()
+		for component in self.components:
+			if component.get('type') == "module":
+				key = component.get('name')
+				reference = component.get('ref')
 			
-			ret_dict[key] = reference
-	return ret_dict
+				ret_dict[key] = reference
+		return ret_dict
 
+	def create_graphs(self):
+		graph = dict()
+		pipe_links = dict()
 
-simple_pipe  = readPipeline("simple_pipe.xml")
-#complex_pipe = readPipeline("complex_pipe.xml")
-#my_pipe = readPipeline("my_pipe.xml")
+		for pipe in self.pipes:
+			start = pipe.find(self.namespace + "start")
+			end = pipe.find(self.namespace + "end")
+		
+			o_component = start.get("component")
+			i_component = end.get("component")
+			# TODO
+			o_variable = start.get("output")
+			i_variable = end.get("input")
 
-#for i_component, direction in enumerate(simple_pipe):
-#	print str(i_component + 1) + ":"
-#	for p in direction:
-#		print str(p) + " ",
-#	print
+			pipe_links[(i_component, i_variable)] = (o_component, o_variable)
 
+			if o_component in ret_dict:
+				# append to existing array
+				graph[o_component].append(i_component)
+			else:
+				# create a new array in this slot
+				graph[o_component] = [i_component]
 
+		return graph, pipe_links
+
+simple_pipe  = Pipeline("simple_pipe.xml")

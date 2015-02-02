@@ -36,8 +36,12 @@ class Module:
 	def parse_information_from_xml(self):
 		self.source_file = self.search_inside_tag("source","ref")
 		self.platform = self.search_inside_tag("platform","name")
-		self.inputs = self.root.findall(self.namespace + "input")
-		self.outputs = self.root.findall(self.namespace + "output")
+		self.inputs = []
+		for i in self.root.findall(self.namespace + "input"):
+			self.inputs.append(Input(i))
+		self.outputs = []
+		for o in self.root.findall(self.namespace + "output"):
+			self.outputs.append(Output(i))
 
 
 	def search_inside_tag(self, tag, attribute):
@@ -46,6 +50,37 @@ class Module:
 	def __str__(self):
 		return etree.tostring(self.tree,pretty_print=True)
 
+	def incoming_pipe(self, other):
+		pass
+		#TODO
+	def outgoing_pipe(self, other):
+		pass
+		# TODO
+
+		#('plot', 'df'): ('start', 'df')
+
+
+class Var:
+	def __init__(self, element):
+		self.breakdown_element(element)
+
+	def breakdown_element(self, e):
+		self.variable_type = e.get("type")
+		self.variable_name = e.get("name")
+
+	def is_internal(self):
+		return self.variable_type == "internal"
+
+	def __str__(self):
+		return self.variable_name + "--|--" + self.variable_type
+
+class Input(Var):
+	# Easy wrapper
+	pass	
+
+class Output(Var):
+	# Easy wrapper
+	pass
 
 def createWrittenFile():
 	
