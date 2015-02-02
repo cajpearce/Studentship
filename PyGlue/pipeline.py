@@ -170,13 +170,25 @@ class Input(Var):
 
 	def coming_from(self, other):
 		if instanceof(other, Output):
-			self.coming_from = other
+			self.connection = other
 
 class Output(Var):
 	# Easy wrapper
 	def going_to(self, other):
 		if instanceof(other, Input):
-			self.coming_from = other
+			self.connection = other
 
 
+
+class ModulePy:
+	def __init__(self):
+		pass
+
+	def run_file(self, file_name):
+		exec(foo + " = 'something else'")
+		execfile(file_name)
+		save_vars = locals()
+
+	def create_input(self, from_vars, my_vars):
+		pass
 simple_pipe  = Pipeline("pipe.xml")

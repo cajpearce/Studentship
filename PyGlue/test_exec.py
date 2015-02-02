@@ -1,0 +1,1 @@
+print hasnt_been_initiated
