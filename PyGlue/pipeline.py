@@ -51,7 +51,6 @@ class Pipeline:
 		for c in self.components:
 			if c.get('type') == 'module':
 				file_name = c.get('ref')
-				print file_name
 				self.modules.append(Module(file_name))
 
 
@@ -132,7 +131,7 @@ class Module:
 			self.inputs.append(Input(i))
 		self.outputs = []
 		for o in self.root.findall(self.namespace + "output"):
-			self.outputs.append(Output(i))
+			self.outputs.append(Output(o))
 
 
 	def search_inside_tag(self, tag, attribute):
@@ -167,11 +166,17 @@ class Var:
 
 class Input(Var):
 	# Easy wrapper
-	pass	
+	pass
+
+	def coming_from(self, other):
+		if instanceof(other, Output):
+			self.coming_from = other
 
 class Output(Var):
 	# Easy wrapper
-	pass
+	def going_to(self, other):
+		if instanceof(other, Input):
+			self.coming_from = other
 
 
-simple_pipe  = Pipeline("simple_pipe.xml")
+simple_pipe  = Pipeline("pipe.xml")

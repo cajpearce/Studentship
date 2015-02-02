@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="http://www.openapi.org/2014/" version="0.1">
+  <platform name="python" />
+  <output name="a" type="internal" />
+  <source ref="module1.py"/>
+</module>
