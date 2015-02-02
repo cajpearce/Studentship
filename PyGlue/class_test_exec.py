@@ -1,6 +1,9 @@
 class TestExec:
 	def __init__(self):
-		hasnt_been_initiated = 5
+		print locals()
+		addend = {}
+		addend['hasnt_been_initiated'] = 5
+		print locals() + addend
 		execfile("test_exec.py")
 		print locals()
 

@@ -140,6 +140,7 @@ class Module:
 	def __str__(self):
 		return etree.tostring(self.tree,pretty_print=True)
 
+
 	def incoming_pipe(self, other):
 		pass
 		#TODO
@@ -181,14 +182,24 @@ class Output(Var):
 
 
 class ModulePy:
-	def __init__(self):
-		pass
+	def __init__(self, run_file,input_var_names,output_var_names):
+		# python file to run
+		self.run_file = run_file
+
+		# create a small list of the incoming and outgoing variables
+		# TODO: write these as a dictionary???
+		self.input_variable_names = input_var_names
+		self.output_variable_names = output_var_names
+
+	def filter_inputs(self, other_dict, input_variable_names):
+		# Have to think about how I'm going to process this
+		self.start_locals = { k: other_dict[k] for k in input_variable_names}
 
 	def run_file(self, file_name):
-		exec(foo + " = 'something else'")
+		locals()['dataframe1'] = DATAFRAME_FROM_M1
 		execfile(file_name)
-		save_vars = locals()
+		self.save_vars = locals()
 
-	def create_input(self, from_vars, my_vars):
-		pass
+	def compare_outputs_to_locals(self):
+		
 simple_pipe  = Pipeline("pipe.xml")
