@@ -14,6 +14,8 @@ class Pipeline:
 
 		self.parse_information_from_xml()
 		self.read_in_modules()
+		
+		self.running_order = self.order_with_actual_modules()
 
 	def setup_tree(self):
 		self.tree = etree.parse(self.xml_file)
@@ -33,11 +35,20 @@ class Pipeline:
 
 	# above completed		
 
-	def run_pipeline(self):
-		#TODO
+	def order_with_actual_modules(self):
+		ret_order = []
 		for s in self.module_order:
 			for individual_module in s:
-				pass
+				m = self.modules[individual_module]
+				ret_order.append(m)
+		return ret_order
+		
+	def run_pipeline(self):
+
+		for m in self.running_order():
+			m_py = m.create_module_py()
+			#TODO
+						
 
 
 	def parse_information_from_xml(self):
@@ -49,10 +60,10 @@ class Pipeline:
 		graph, self.variable_pipe_links = self.create_graphs()		
 		self.module_order = sort_topologically(graph)
 		self.module_order.reverse()
-		print self.module_order
-		################################################################
-		# now we have the module_order: directions
-		# we have the variable_pipe_links: refers to inputs
+
+		# NOTE ON VARIABLE_PIPE_LINKS
+		# IT IS 'OUTPUT' POINTING TO 'INPUT'
+			
 	
 	def read_in_modules(self):
 		self.modules = {}
@@ -60,11 +71,6 @@ class Pipeline:
 			if c.get('type') == 'module':
 				module_file_name = c.get('ref')
 				self.modules[module_file_name] = Module(module_file_name)
-
-	def create_module_py(self):
-		for m in self.modules:
-			#TODO
-			pass
 
 	def create_component_dictionary(self):
 		# creates a dictionary
@@ -89,15 +95,13 @@ class Pipeline:
 			o_component = start.get("component")
 			i_component = end.get("component")
 			
-			# change this here???
-			print o_component
 			o_component = self.components_dict[o_component]
 			i_component = self.components_dict[i_component]
 
 			o_variable = start.get("output")
 			i_variable = end.get("input")
 
-			pipe_links[(i_component, i_variable)] = (o_component, o_variable)
+			pipe_links[(o_component, o_variable)] = (i_component, i_variable)
 
 			if o_component in graph:
 				# append to existing array
@@ -121,6 +125,8 @@ class Module:
 		self.setup_root()
 
 		self.parse_information_from_xml()
+		self.create_module_py()
+
 	def setup_tree(self):
 		self.tree = etree.parse(self.xml_file)
 
@@ -140,19 +146,36 @@ class Module:
 	def parse_information_from_xml(self):
 		self.source_file = self.search_inside_tag("source","ref")
 		self.platform = self.search_inside_tag("platform","name")
-		self.inputs = []
-		for i in self.root.findall(self.namespace + "input"):
-			self.inputs.append(Input(i))
-		self.outputs = []
-		for o in self.root.findall(self.namespace + "output"):
-			self.outputs.append(Output(o))
+		
+		# These are still elements tho
+		self.inputs = self.root.findall(self.namespace + "input")
+		self.outputs = self.root.findall(self.namespace + "output")
+		
+		self.input_types, self.input_names = self.create_types_and_names(self.inputs)
+		self.output_types, self.output_names = self.create_types_and_names(self.outputs)
 
+		
 
 	def search_inside_tag(self, tag, attribute):
 		return self.root.find(self.namespace + tag).get(attribute)
 	
 	def __str__(self):
 		return etree.tostring(self.tree,pretty_print=True)
+
+	def create_module_py(self):
+		# TODO decide whether I want to "have it" or "be it"
+		self.module_py = ModulePy(self.source_file,
+					self.input_names, self.output_names)
+		return self.module_py
+
+	def create_types_and_names(self, elements):
+		types = []
+		names = []
+		for e in elements:
+			types.append(e.get("type"))
+			names.append(e.get("name"))
+
+		return types, names
 
 
 	def incoming_pipe(self, other):
@@ -164,39 +187,8 @@ class Module:
 
 		#('plot', 'df'): ('start', 'df')
 
-
-class Var:
-	def __init__(self, element):
-		self.breakdown_element(element)
-
-	def breakdown_element(self, e):
-		self.variable_type = e.get("type")
-		self.variable_name = e.get("name")
-
-	def is_internal(self):
-		return self.variable_type == "internal"
-
-	def __str__(self):
-		return self.variable_name + "--|--" + self.variable_type
-
-class Input(Var):
-	# Easy wrapper
-	pass
-
-	def coming_from(self, other):
-		if instanceof(other, Output):
-			self.connection = other
-
-class Output(Var):
-	# Easy wrapper
-	def going_to(self, other):
-		if instanceof(other, Input):
-			self.connection = other
-
-
-
 class ModulePy:
-	def __init__(self, run_file,input_var_names,output_var_names):
+	def __init__(self, run_file,input_var_names, output_var_names):
 		# python file to run
 		self.run_file = run_file
 
@@ -212,7 +204,8 @@ class ModulePy:
 		pre_locals = self.filter_inputs(other_dict,self.input_variable_names)
 		
 		# combine them locals!
-		#locals() = dict(locals().items() + pre_locals.items())
+		for key in pre_locals:
+			locals()[key] = pre_locals[key]
 
 		# run the file!
 		execfile(run_file)
