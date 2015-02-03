@@ -32,6 +32,14 @@ class Pipeline:
 		return self.root
 
 	# above completed		
+
+	def run_pipeline(self):
+		#TODO
+		for s in self.module_order:
+			for individual_module in s:
+				pass
+
+
 	def parse_information_from_xml(self):
 		self.components = self.root.findall(self.namespace+"component")
 		self.pipes = self.root.findall(self.namespace + "pipe")
@@ -41,18 +49,22 @@ class Pipeline:
 		graph, self.variable_pipe_links = self.create_graphs()		
 		self.module_order = sort_topologically(graph)
 		self.module_order.reverse()
-		
+		print self.module_order
 		################################################################
 		# now we have the module_order: directions
 		# we have the variable_pipe_links: refers to inputs
 	
 	def read_in_modules(self):
-		self.modules = []
+		self.modules = {}
 		for c in self.components:
 			if c.get('type') == 'module':
-				file_name = c.get('ref')
-				self.modules.append(Module(file_name))
+				module_file_name = c.get('ref')
+				self.modules[module_file_name] = Module(module_file_name)
 
+	def create_module_py(self):
+		for m in self.modules:
+			#TODO
+			pass
 
 	def create_component_dictionary(self):
 		# creates a dictionary
@@ -77,6 +89,8 @@ class Pipeline:
 			o_component = start.get("component")
 			i_component = end.get("component")
 			
+			# change this here???
+			print o_component
 			o_component = self.components_dict[o_component]
 			i_component = self.components_dict[i_component]
 
@@ -191,15 +205,26 @@ class ModulePy:
 		self.input_variable_names = input_var_names
 		self.output_variable_names = output_var_names
 
-	def filter_inputs(self, other_dict, input_variable_names):
-		# Have to think about how I'm going to process this
-		self.start_locals = { k: other_dict[k] for k in input_variable_names}
+		#self.run_file(run_file, other_dict) # saves to self.save_vars
 
-	def run_file(self, file_name):
-		locals()['dataframe1'] = DATAFRAME_FROM_M1
-		execfile(file_name)
+	def run_file(self, run_file, other_dict):
+		# get in the 'input' variables from pipes!
+		pre_locals = self.filter_inputs(other_dict,self.input_variable_names)
+		
+		# combine them locals!
+		#locals() = dict(locals().items() + pre_locals.items())
+
+		# run the file!
+		execfile(run_file)
+	
 		self.save_vars = locals()
 
-	def compare_outputs_to_locals(self):
-		
+
+	def filter_inputs(self, other_dict, input_variable_names):
+		return { k: other_dict[k] for k in input_variable_names}
+
+
+	def get_locals_dict(self):
+		return self.save_vars
+
 simple_pipe  = Pipeline("pipe.xml")
