@@ -57,7 +57,7 @@ class Pipeline:
 
 
 		self.components_dict = self.create_component_dictionary()
-		graph, self.variable_pipe_links = self.create_graphs()		
+		graph, self.input_links, self.output.links = self.create_graphs()		
 		self.module_order = sort_topologically(graph)
 		self.module_order.reverse()
 
@@ -86,7 +86,8 @@ class Pipeline:
 
 	def create_graphs(self):
 		graph = dict()
-		pipe_links = dict()
+		input_links = dict()
+		output_links = dict()
 
 		for pipe in self.pipes:
 			start = pipe.find(self.namespace + "start")
@@ -101,7 +102,8 @@ class Pipeline:
 			o_variable = start.get("output")
 			i_variable = end.get("input")
 
-			pipe_links[(o_component, o_variable)] = (i_component, i_variable)
+			input_links[(i_component, i_variable)] = (o_component, o_variable)
+			output_links[(o_component, o_variable)] = (i_component, i_variable)
 
 			if o_component in graph:
 				# append to existing array
@@ -110,11 +112,11 @@ class Pipeline:
 				# create a new array in this slot
 				graph[o_component] = [i_component]
 
-		return graph, pipe_links
+		return graph, input_links, output_links
 
 
 class Module:
-	def __init__(self, xml_file):
+	def __init__(self, xml_file, input_links, output_links):
 		if not os.path.isfile(xml_file):
 			raise IOError("That is not a file you fucking jerk.")
 
@@ -125,7 +127,13 @@ class Module:
 		self.setup_root()
 
 		self.parse_information_from_xml()
+		
+		# assigns to self.module_py
 		self.create_module_py()
+
+
+		self.input_links = input_links
+		self.output_links = output_links
 
 	def setup_tree(self):
 		self.tree = etree.parse(self.xml_file)
@@ -164,7 +172,7 @@ class Module:
 
 	def create_module_py(self):
 		# TODO decide whether I want to "have it" or "be it"
-		self.module_py = ModulePy(self.source_file,
+		self.module_py = ModulePy(self.source_file,self.xml_file,
 					self.input_names, self.output_names)
 		return self.module_py
 
@@ -178,30 +186,33 @@ class Module:
 		return types, names
 
 
-	def incoming_pipe(self, other):
-		pass
-		#TODO
-	def outgoing_pipe(self, other):
-		pass
-		# TODO
-
-		#('plot', 'df'): ('start', 'df')
 
 class ModulePy:
-	def __init__(self, run_file,input_var_names, output_var_names):
+	# TODO
+	# TODO need to fix it so that it takes the pipe connection and actually 
+	# assigns the change in variable names
+	
+	def __init__(self, run_file,module_xml, input_pipes, output_pipes):
 		# python file to run
 		self.run_file = run_file
+		# the xml module added to it
+		self.module_xml = module_xml
 
-		# create a small list of the incoming and outgoing variables
-		# TODO: write these as a dictionary???
-		self.input_variable_names = input_var_names
-		self.output_variable_names = output_var_names
-
-		#self.run_file(run_file, other_dict) # saves to self.save_vars
-
-	def run_file(self, run_file, other_dict):
+		self.input_pipes = input_pipes
+		self.output_pipes = output_pipes
+		
+		self.filter_pipes(self.input_pipes)
+		self.filter_pipes(self.output_pipes)
+	
+ 	
+	def run_file(self, run_file, other=None):
 		# get in the 'input' variables from pipes!
-		pre_locals = self.filter_inputs(other_dict,self.input_variable_names)
+		pre_locals = {}
+
+		
+		if isinstance(other, ModulePy):
+			pre_locals = self.filter_inputs(other.save_vars,
+					self.input_variable_names)
 		
 		# combine them locals!
 		for key in pre_locals:
@@ -213,11 +224,11 @@ class ModulePy:
 		self.save_vars = locals()
 
 
-	def filter_inputs(self, other_dict, input_variable_names):
-		return { k: other_dict[k] for k in input_variable_names}
-
-
-	def get_locals_dict(self):
-		return self.save_vars
+	def filter_pipes(self, pipes):
+		pipes = {key: value for key, value in pipes.items() if key[0] != self.module_xml}
+				
 
 simple_pipe  = Pipeline("pipe.xml")
+m1 = simple_pipe.modules['module2.xml']
+mpy1 = m1.module_py
+
