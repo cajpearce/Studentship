@@ -14,8 +14,8 @@ class Pipeline:
 
 		self.parse_information_from_xml()
 		self.read_in_modules()
-		
-		self.running_order = self.order_with_actual_modules()
+
+		self.running_order = self.collapse_list_of_sets_into_module_order()
 
 	def setup_tree(self):
 		self.tree = etree.parse(self.xml_file)
@@ -35,19 +35,20 @@ class Pipeline:
 
 	# above completed		
 
-	def order_with_actual_modules(self):
-		ret_order = []
-		for s in self.module_order:
-			for individual_module in s:
-				m = self.modules[individual_module]
-				ret_order.append(m)
-		return ret_order
+	def collapse_list_of_sets_into_module_order(self):
+		return [m for subset in self.module_order for m in subset]
 		
 	def run_pipeline(self):
-
-		for m in self.running_order():
-			m_py = m.create_module_py()
-			#TODO
+		has_been = list()
+		#TODO
+		for m in self.running_order:
+			has_been.append(m)
+			
+			what_i_need_inputs_from = m.which_modules_are_providing_inputs()
+			
+			for i in what_i_need_inputs_from:
+				pass
+				#TODO
 						
 
 
@@ -57,11 +58,11 @@ class Pipeline:
 
 
 		self.components_dict = self.create_component_dictionary()
-		graph, self.input_links, self.output.links = self.create_graphs()		
+		graph, self.all_input_pipes, self.all_output_pipes = self.create_graphs()		
 		self.module_order = sort_topologically(graph)
 		self.module_order.reverse()
 
-		# NOTE ON VARIABLE_PIPE_LINKS
+		# NOTE ON VARIABLE_PIPE_pipes
 		# IT IS 'OUTPUT' POINTING TO 'INPUT'
 			
 	
@@ -70,7 +71,10 @@ class Pipeline:
 		for c in self.components:
 			if c.get('type') == 'module':
 				module_file_name = c.get('ref')
-				self.modules[module_file_name] = Module(module_file_name)
+				self.modules[module_file_name] = Module(module_file_name, 
+				dict(self.all_input_pipes), dict(self.all_output_pipes))
+				# creates new dictionaries
+
 
 	def create_component_dictionary(self):
 		# creates a dictionary
@@ -86,8 +90,8 @@ class Pipeline:
 
 	def create_graphs(self):
 		graph = dict()
-		input_links = dict()
-		output_links = dict()
+		all_input_pipes = dict()
+		all_output_pipes = dict()
 
 		for pipe in self.pipes:
 			start = pipe.find(self.namespace + "start")
@@ -102,8 +106,8 @@ class Pipeline:
 			o_variable = start.get("output")
 			i_variable = end.get("input")
 
-			input_links[(i_component, i_variable)] = (o_component, o_variable)
-			output_links[(o_component, o_variable)] = (i_component, i_variable)
+			all_input_pipes[(i_component, i_variable)] = (o_component, o_variable)
+			all_output_pipes[(o_component, o_variable)] = (i_component, i_variable)
 
 			if o_component in graph:
 				# append to existing array
@@ -112,11 +116,11 @@ class Pipeline:
 				# create a new array in this slot
 				graph[o_component] = [i_component]
 
-		return graph, input_links, output_links
+		return graph, all_input_pipes, all_output_pipes
 
 
 class Module:
-	def __init__(self, xml_file, input_links, output_links):
+	def __init__(self, xml_file, input_pipes, output_pipes):
 		if not os.path.isfile(xml_file):
 			raise IOError("That is not a file you fucking jerk.")
 
@@ -127,13 +131,21 @@ class Module:
 		self.setup_root()
 
 		self.parse_information_from_xml()
+
+		self.input_pipes = self.filter_pipes(input_pipes)
+		self.output_pipes = self.filter_pipes(output_pipes)
+
+		# makes them specific to Modules!
+		self.filter_pipes(self.input_pipes)
+		self.filter_pipes(self.output_pipes)		
 		
-		# assigns to self.module_py
-		self.create_module_py()
-
-
-		self.input_links = input_links
-		self.output_links = output_links
+		
+	def filter_pipes(self, pipes):
+		new_pipes = {}
+		for key, value in pipes.items():
+			if key[0] == self.xml_file:
+				new_pipes[key] = value
+		return new_pipes
 
 	def setup_tree(self):
 		self.tree = etree.parse(self.xml_file)
@@ -170,12 +182,6 @@ class Module:
 	def __str__(self):
 		return etree.tostring(self.tree,pretty_print=True)
 
-	def create_module_py(self):
-		# TODO decide whether I want to "have it" or "be it"
-		self.module_py = ModulePy(self.source_file,self.xml_file,
-					self.input_names, self.output_names)
-		return self.module_py
-
 	def create_types_and_names(self, elements):
 		types = []
 		names = []
@@ -186,33 +192,30 @@ class Module:
 		return types, names
 
 
-
-class ModulePy:
-	# TODO
-	# TODO need to fix it so that it takes the pipe connection and actually 
-	# assigns the change in variable names
+	def which_modules_are_providing_inputs(self):
+		unique_modules = set()
 	
-	def __init__(self, run_file,module_xml, input_pipes, output_pipes):
-		# python file to run
-		self.run_file = run_file
-		# the xml module added to it
-		self.module_xml = module_xml
+		for me, them in self.input_pipes:
+			unique_modules.add(them[0])
 
-		self.input_pipes = input_pipes
-		self.output_pipes = output_pipes
-		
-		self.filter_pipes(self.input_pipes)
-		self.filter_pipes(self.output_pipes)
+		return list(unique_modules)
+
+	def which_modules_am_i_passing_outputs_to(self):
+		unique_modules = set()
 	
- 	
+		for me, them in self.output_pipes:
+			unique_modules.add(them[0])
+
+		return list(unique_modules)
+
+
+	# TODO 	
 	def run_file(self, run_file, other=None):
 		# get in the 'input' variables from pipes!
 		pre_locals = {}
 
 		
-		if isinstance(other, ModulePy):
-			pre_locals = self.filter_inputs(other.save_vars,
-					self.input_variable_names)
+		# filter pre_locals
 		
 		# combine them locals!
 		for key in pre_locals:
@@ -221,14 +224,12 @@ class ModulePy:
 		# run the file!
 		execfile(run_file)
 	
-		self.save_vars = locals()
-
-
-	def filter_pipes(self, pipes):
-		pipes = {key: value for key, value in pipes.items() if key[0] != self.module_xml}
+		self.save_locals = locals()
 				
 
+	
+
+
 simple_pipe  = Pipeline("pipe.xml")
-m1 = simple_pipe.modules['module2.xml']
-mpy1 = m1.module_py
+m1 = simple_pipe.modules['module1.xml']
 
