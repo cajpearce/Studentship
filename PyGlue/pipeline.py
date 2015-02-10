@@ -98,6 +98,7 @@ class Pipeline(GetXMLStuff):
 		all_output_pipes = dict()
 
 		ref_dict = self.component_dictionary(components)
+
 		for pipe in pipes:
 			# Elements
 			start = pipe.find(self.namespace + "start")
@@ -131,7 +132,20 @@ class Pipeline(GetXMLStuff):
 
 		return graph, all_input_pipes, all_output_pipes
 
+	def validate_pipeline(self):
+		test = []
+		for me, them in self.all_input_pipes.items():
+			test.append(me[1] in me[0].input_dict)
+			test.append(them[1] in them[0].output_dict)
+		for me, them in self.all_output_pipes.items():
+			test.append(me[1] in me[0].output_dict)
+			test.append(them[1] in them[0].input_dict)
+	
+		return all(test)
+
 	def run_pipeline(self):
+		print self.validate_pipeline()
+
 		for m in self.module_order:
 			print "input: " + str(m.which_modules_are_providing_inputs())
 			print "output:" + str(m.which_modules_am_i_passing_outputs_to())
@@ -140,13 +154,14 @@ class Pipeline(GetXMLStuff):
 class Module(GetXMLStuff):
 	def __init__(self, xml_file):
 		GetXMLStuff.__init__(self, xml_file)
-
+		
 		self.parse_information_from_xml()
+
+		# logical indicator
+		self.has_file_been_run = False
 	
 	def set_pipes(self, input_pipes, output_pipes):
-		# TODO MUST USE THIS
-		#		
-	
+		''' this function must be used'''
 		self.input_pipes = self.filter_pipes(input_pipes)
 		self.output_pipes = self.filter_pipes(output_pipes)
 		
@@ -161,12 +176,11 @@ class Module(GetXMLStuff):
 		self.run_file = self.search_inside_tag("source","ref")
 		self.platform = self.search_inside_tag("platform","name")
 		
-		# These are still elements tho
-		self.inputs = self.root.findall(self.namespace + "input")
-		self.outputs = self.root.findall(self.namespace + "output")
+		input_elements = self.root.findall(self.namespace + "input")
+		output_elements = self.root.findall(self.namespace + "output")
 		
-		#self.input_types, self.input_names = self.create_types_and_names(self.inputs)
-		#self.output_types, self.output_names = self.create_types_and_names(self.outputs)
+		self.input_dict = self.create_var_type_dict(input_elements)
+		self.output_dict = self.create_var_type_dict(output_elements)
 
 
 	def which_modules_are_providing_inputs(self):
@@ -174,6 +188,7 @@ class Module(GetXMLStuff):
 	
 		for me, them in self.input_pipes.items():
 			unique_modules.add(them[0])
+
 
 		return list(unique_modules)
 
@@ -185,41 +200,28 @@ class Module(GetXMLStuff):
 
 		return list(unique_modules)
 
-
-	# TODO 	
-	def run_file(self, run_file, other=None):
-		# get in the 'input' variables from pipes!
-		pre_locals = {}
-
-		
-		# filter pre_locals
-		
-		# combine them locals!
-		for key in pre_locals:
-			locals()[key] = pre_locals[key]
+	def run_file(self, run_file):
+		for key in other_locals:
+			locals()[key] = other_locals[key]
 
 		# run the file!
 		execfile(run_file)
-	
-		self.save_locals = locals()
+		
+		self.has_file_been_run = True
+		self.save_locals = locals()		
 			
 	def get_variable_from_locals(self, variable_name):
-		ret = None
-		try:
-			ret = self.save_locals[variable_name]
-		except AttributeError:
-			print "WOT"
+		if self.has_file_been_run:
+			return self.save_locals[variable_name]
+		else:
+			raise AttributeError("You need to run the file first.")
 
-		return ret
 
-	#def create_types_and_names(self, elements):
-	#	types = []
-	#	names = []
-	#	for e in elements:
-	#		types.append(e.get("type"))
-	#		names.append(e.get("name"))
-#
-#		return types, names
+
+	def create_var_type_dict(self, elements):
+		''' 	for future expansion
+			will be useful when I start to allow external inputs '''
+		return {e.get("name"): e.get("type") for e in elements}
 
 
 simple_pipe  = Pipeline("pipe.xml")
