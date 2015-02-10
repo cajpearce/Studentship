@@ -1,2 +1,1 @@
-print b
-print "but did it work tho"
+print b + 5

@@ -180,6 +180,7 @@ class Module(GetXMLStuff):
 
 		self.incoming_modules= self.which_modules_are_providing_inputs()
 		self.outgoing_modules = self.which_modules_am_i_passing_outputs_to()
+
 	def filter_pipes(self, pipes):
 		new_pipes = {}
 		for key, value in pipes.items():
@@ -219,12 +220,19 @@ class Module(GetXMLStuff):
 		self.run_py_script(self.run_file,self.get_all_input_variables())
 
 	def run_py_script(self, run_file, pre_locals):
-		print "running " + run_file + " ..."
+		print "running " + run_file + "..."
 		for key in pre_locals:
 			locals()[key] = pre_locals[key]
 
 		# run the file!
-		execfile(run_file)
+		try:
+			execfile(run_file)
+		except NameError, e:
+			err_string = "ERROR: You have not provided all inputs: " 
+			print err_string + str(e)
+		except TypeError, e:
+			err_string = "ERROR: You may have connected the wrong pipes: "
+			print err_string + str(e)
 		
 		self.has_file_been_run = True
 		self.save_locals = locals()		
@@ -244,7 +252,4 @@ class Module(GetXMLStuff):
 
 
 simple_pipe  = Pipeline("pipe.xml")
-modules = simple_pipe.modules
-m1 = modules['module1.xml']
-m2 = modules['module2.xml']
-
+simple_pipe.run_pipeline()
