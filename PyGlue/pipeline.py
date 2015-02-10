@@ -55,10 +55,8 @@ class Pipeline(GetXMLStuff):
 		modules = {}
 		for c in components:
 			if c.get('type') == 'module':
-				module_file_name = c.get('ref')
-				print module_file_name
-				modules[module_file_name] = Module(module_file_name)
-				# creates new dictionaries
+				xml_file = c.get('ref')
+				modules[xml_file] = Module(xml_file)
 		
 		return modules
 
@@ -133,6 +131,11 @@ class Pipeline(GetXMLStuff):
 
 		return graph, all_input_pipes, all_output_pipes
 
+	def run_pipeline(self):
+		for m in self.module_order:
+			print "input: " + str(m.which_modules_are_providing_inputs())
+			print "output:" + str(m.which_modules_am_i_passing_outputs_to())
+
 
 class Module(GetXMLStuff):
 	def __init__(self, xml_file):
@@ -169,7 +172,7 @@ class Module(GetXMLStuff):
 	def which_modules_are_providing_inputs(self):
 		unique_modules = set()
 	
-		for me, them in self.input_pipes:
+		for me, them in self.input_pipes.items():
 			unique_modules.add(them[0])
 
 		return list(unique_modules)
@@ -177,7 +180,7 @@ class Module(GetXMLStuff):
 	def which_modules_am_i_passing_outputs_to(self):
 		unique_modules = set()
 	
-		for me, them in self.output_pipes:
+		for me, them in self.output_pipes.items():
 			unique_modules.add(them[0])
 
 		return list(unique_modules)
@@ -199,7 +202,15 @@ class Module(GetXMLStuff):
 		execfile(run_file)
 	
 		self.save_locals = locals()
-				
+			
+	def get_variable_from_locals(self, variable_name):
+		ret = None
+		try:
+			ret = self.save_locals[variable_name]
+		except AttributeError:
+			print "WOT"
+
+		return ret
 
 	#def create_types_and_names(self, elements):
 	#	types = []
@@ -212,5 +223,7 @@ class Module(GetXMLStuff):
 
 
 simple_pipe  = Pipeline("pipe.xml")
-m1 = simple_pipe.modules['module1.xml']
+modules = simple_pipe.modules
+m1 = modules['module1.xml']
+m2 = modules['module2.xml']
 
