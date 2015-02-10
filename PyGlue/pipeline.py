@@ -137,18 +137,19 @@ class Pipeline(GetXMLStuff):
 		for me, them in self.all_input_pipes.items():
 			test.append(me[1] in me[0].input_dict)
 			test.append(them[1] in them[0].output_dict)
+
 		for me, them in self.all_output_pipes.items():
 			test.append(me[1] in me[0].output_dict)
 			test.append(them[1] in them[0].input_dict)
 	
 		return all(test)
 
-	def run_pipeline(self):
-		print self.validate_pipeline()
 
-		for m in self.module_order:
-			print "input: " + str(m.which_modules_are_providing_inputs())
-			print "output:" + str(m.which_modules_am_i_passing_outputs_to())
+	def run_pipeline(self):
+		if self.validate_pipeline():
+
+			for m in self.module_order:
+				m.run()
 
 
 class Module(GetXMLStuff):
@@ -160,11 +161,25 @@ class Module(GetXMLStuff):
 		# logical indicator
 		self.has_file_been_run = False
 	
+	def create_dictionary_marker(self, variable_name):
+		return (self, variable_name)
+	
+	def get_variable_from_other_module(self, variable_name):
+		ref = self.create_dictionary_marker(variable_name)
+		other = self.input_pipes[ref]
+		
+		return other[0].get_variable_from_locals(other[1])
+
+	def get_all_input_variables(self):
+		return {i: self.get_variable_from_other_module(i) for i in self.input_dict}
+		
 	def set_pipes(self, input_pipes, output_pipes):
 		''' this function must be used'''
 		self.input_pipes = self.filter_pipes(input_pipes)
 		self.output_pipes = self.filter_pipes(output_pipes)
-		
+
+		self.incoming_modules= self.which_modules_are_providing_inputs()
+		self.outgoing_modules = self.which_modules_am_i_passing_outputs_to()
 	def filter_pipes(self, pipes):
 		new_pipes = {}
 		for key, value in pipes.items():
@@ -200,9 +215,13 @@ class Module(GetXMLStuff):
 
 		return list(unique_modules)
 
-	def run_file(self, run_file):
-		for key in other_locals:
-			locals()[key] = other_locals[key]
+	def run(self):
+		self.run_py_script(self.run_file,self.get_all_input_variables())
+
+	def run_py_script(self, run_file, pre_locals):
+		print "running " + run_file + " ..."
+		for key in pre_locals:
+			locals()[key] = pre_locals[key]
 
 		# run the file!
 		execfile(run_file)

@@ -2,5 +2,5 @@
 <module xmlns="http://www.openapi.org/2014/" version="0.1">
   <platform name="python" />
   <input name="b" type="internal" />
-  <source ref="module1.py"/>
+  <source ref="module2.py"/>
 </module>
