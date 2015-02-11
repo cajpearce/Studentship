@@ -1,6 +1,8 @@
 from lxml import etree
 from topological_sort import sort_topologically
+import rpy2.robjects as robjects
 import os
+
 
 class GetXMLStuff(object):
 	'''
@@ -171,6 +173,8 @@ class Module(GetXMLStuff):
 		self.has_file_been_run = False
 	
 	def create_dictionary_marker(self, variable_name):
+		# combines self reference with variable name
+		# input/output pipes are stored as (Module(), 'variable')
 		return (self, variable_name)
 	
 	def get_variable_from_other_module(self, variable_name):
@@ -229,12 +233,23 @@ class Module(GetXMLStuff):
 		if self.platform.lower() == "python":
 			self.run_py_script(self.run_file,self.get_all_input_variables())
 		elif self.platform.lower() == "r":
-			self.run_R_script(self.run_file)
+			self.run_R_script(self.run_file, self.get_all_input_variables())
 
 
-	def run_R_script(self, run_file):
-		# TODO
-		pass
+	def run_R_script(self, run_file, pre_locals):		
+		r_file = open(run_file, 'r')
+		r_script = r_file.read()
+		r_file.close()
+	
+		r_environment = robjects.Environment()
+		
+		for key in pre_locals:
+			r_environment[key] = pre_locals[key]
+
+		robjects.setenvironment(r_environment)
+		robjects.r(r_script)
+
+		self.save_locals = {i: r_environment[i] for i in self.output_dict}
 
 
 	def run_py_script(self, run_file, pre_locals):
@@ -269,5 +284,5 @@ class Module(GetXMLStuff):
 		return {e.get("name"): e.get("type") for e in elements}
 
 
-simple_pipe  = Pipeline("pipe.xml")
+simple_pipe  = Pipeline("pipe_R.xml")
 simple_pipe.run_pipeline()

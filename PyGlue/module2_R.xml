@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="http://www.openapi.org/2014/" version="0.1">
+  <platform name="R" />
+  <input name="b" type="internal" />
+  <source ref="module2.py"/>
+</module>
