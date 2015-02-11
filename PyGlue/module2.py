@@ -1,1 +1,2 @@
-print b + 5
+print b
+print "but did it work tho"

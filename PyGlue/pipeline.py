@@ -3,9 +3,16 @@ from topological_sort import sort_topologically
 import os
 
 class GetXMLStuff(object):
+	'''
+	This is a class that sets up the very basic necessities of the XML.
+	I created it as a class because the set up for an XML object is the same
+	For both a Pipeline and a Module in OpenAPI.
+	'''
 	def __init__(self, xml_file):
 		if not os.path.isfile(xml_file):
 			raise IOError("You have provided an invalid XML file.")
+
+		
 		self.xml_file = xml_file
 
 		self.setup_tree()
@@ -21,37 +28,30 @@ class GetXMLStuff(object):
 	def setup_tree(self):
 		self.tree = etree.parse(self.xml_file)
 
-		return self.tree
-
 	def setup_namespace(self):
 		temp_namespace = self.tree.getroot().nsmap
-		#formats it properly and assigns it to self
 		self.namespace = "{" + temp_namespace[None] + "}"
-
-		return self.namespace
 
 	def setup_root(self):
 		self.root = self.tree.getroot()
-		return self.root
 
 
 
 class Pipeline(GetXMLStuff):
 	def __init__(self, xml_file):
 		GetXMLStuff.__init__(self, xml_file)
-
+		
 		self.parse_information_from_xml()
-
-		# self.module_order
-		# self.modules
-		# self.all_input_pipes
-		# self.all_output_pipes
 		
 
 	def collapse_module_order_list(self, module_order):
+		# after topological sort, it is set up as a list of sets
+		# this method collapses down to a single (ordered) list
 		return [m for subset in module_order for m in subset]
 			
 	def read_in_modules(self, components):
+		# read in modules as a dictionary, with the xml file name
+		# pointing to the object -> 'module1.xml': Module()
 		modules = {}
 		for c in components:
 			if c.get('type') == 'module':
@@ -61,8 +61,7 @@ class Pipeline(GetXMLStuff):
 		return modules
 
 	def component_dictionary(self, components):
-		# creates a dictionary
-		# really simply, just maps m1 to module1.xml
+		# creates a really simple dictionary -> maps m1 to module1.xml
 		ret_dict = dict()
 		for component in components:
 			if component.get('type') == "module":
@@ -73,26 +72,32 @@ class Pipeline(GetXMLStuff):
 		return ret_dict
 
 	def parse_information_from_xml(self):
+		# 1. gets all the components and pipes
 		components = self.root.findall(self.namespace+"component")
 		pipes = self.root.findall(self.namespace + "pipe")
 		
+		# 2. reads in the modules
 		self.modules = self.read_in_modules(components)
-
+		
+		# 3. gets the order and the pipeline connections
 		graph, self.all_input_pipes, self.all_output_pipes = self.create_graph(pipes, components)	
-
+		# 4. for all modules passes them their pipes
 		self.set_module_pipes(self.modules)		
 
+		# 5. reverses, sorts, and collapses the order
 		order = sort_topologically(graph)
-		order.reverse()
-		
+		order.reverse()		
 		self.module_order = self.collapse_module_order_list(order)
 
 	def set_module_pipes(self, modules):
+		# passes the complete set of pipes to each module (each module
+		# sorts them themselves)
 		for xml_file, m in modules.items():
 			m.set_pipes(dict(self.all_input_pipes), 
 				dict(self.all_output_pipes))
 
 	def create_graph(self, pipes, components):
+		# creates the pipe connections and the node graph
 		graph = dict()
 		all_input_pipes = dict()
 		all_output_pipes = dict()
@@ -133,6 +138,9 @@ class Pipeline(GetXMLStuff):
 		return graph, all_input_pipes, all_output_pipes
 
 	def validate_pipeline(self):
+		# only checks XML validity
+		# checks it by checking pipes against the modules
+		# TODO: back check modules against pipes
 		test = []
 		for me, them in self.all_input_pipes.items():
 			test.append(me[1] in me[0].input_dict)
@@ -146,6 +154,7 @@ class Pipeline(GetXMLStuff):
 
 
 	def run_pipeline(self):
+		# checks the validity, then in order runs the modules
 		if self.validate_pipeline():
 
 			for m in self.module_order:
@@ -217,7 +226,16 @@ class Module(GetXMLStuff):
 		return list(unique_modules)
 
 	def run(self):
-		self.run_py_script(self.run_file,self.get_all_input_variables())
+		if self.platform.lower() == "python":
+			self.run_py_script(self.run_file,self.get_all_input_variables())
+		elif self.platform.lower() == "r":
+			self.run_R_script(self.run_file)
+
+
+	def run_R_script(self, run_file):
+		# TODO
+		pass
+
 
 	def run_py_script(self, run_file, pre_locals):
 		print "running " + run_file + "..."
