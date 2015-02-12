@@ -171,6 +171,7 @@ class Module(GetXMLStuff):
 
 		# logical indicator
 		self.has_file_been_run = False
+		self.has_set_pipes = False
 	
 	def create_dictionary_marker(self, variable_name):
 		# combines self reference with variable name
@@ -178,23 +179,32 @@ class Module(GetXMLStuff):
 		return (self, variable_name)
 	
 	def get_variable_from_other_module(self, variable_name):
+		# gets var y from another module corresponding to required var x
+		# for this module. Needs to do it this way because names do not 
+		# need to match up in OpenAPI. So need to use pipes references
+
 		ref = self.create_dictionary_marker(variable_name)
 		other = self.input_pipes[ref]
 		
 		return other[0].get_variable_from_locals(other[1])
 
 	def get_all_input_variables(self):
+		# gets all input variables from the 'incoming' modules
 		return {i: self.get_variable_from_other_module(i) for i in self.input_dict}
 		
 	def set_pipes(self, input_pipes, output_pipes):
 		''' this function must be used'''
+		# did it this way so I could pass Module references in the pipes
+		# instead of just 'module1.xml'
+
 		self.input_pipes = self.filter_pipes(input_pipes)
 		self.output_pipes = self.filter_pipes(output_pipes)
 
-		self.incoming_modules= self.which_modules_are_providing_inputs()
-		self.outgoing_modules = self.which_modules_am_i_passing_outputs_to()
+		self.has_set_pipes = True
 
 	def filter_pipes(self, pipes):
+		# since the pipes are being passed from the Pipeline, EVERY pipe 
+		# will be listed. this filters down to pipes to/from this module
 		new_pipes = {}
 		for key, value in pipes.items():
 			if key[0] is self:
@@ -202,62 +212,62 @@ class Module(GetXMLStuff):
 		return new_pipes
 
 	def parse_information_from_xml(self):
+		# 1. sets the file to run
 		self.run_file = self.search_inside_tag("source","ref")
+
+		# 2. sets the running platform (only R and Python supported)
 		self.platform = self.search_inside_tag("platform","name")
 		
+		# 3. gets all the relevant connection elements
 		input_elements = self.root.findall(self.namespace + "input")
 		output_elements = self.root.findall(self.namespace + "output")
 		
+		# 4. and creates dictionaries out of them
 		self.input_dict = self.create_var_type_dict(input_elements)
 		self.output_dict = self.create_var_type_dict(output_elements)
 
-
-	def which_modules_are_providing_inputs(self):
-		unique_modules = set()
-	
-		for me, them in self.input_pipes.items():
-			unique_modules.add(them[0])
-
-
-		return list(unique_modules)
-
-	def which_modules_am_i_passing_outputs_to(self):
-		unique_modules = set()
-	
-		for me, them in self.output_pipes.items():
-			unique_modules.add(them[0])
-
-		return list(unique_modules)
-
 	def run(self):
-		if self.platform.lower() == "python":
-			self.run_py_script(self.run_file,self.get_all_input_variables())
-		elif self.platform.lower() == "r":
-			self.run_R_script(self.run_file, self.get_all_input_variables())
+		# sorts out the basics of running the module
+		if self.has_set_pipes:
+			if self.platform.lower() == "python":
+				self.run_py_script(self.run_file,self.get_all_input_variables())
+			elif self.platform.lower() == "r":
+				self.run_R_script(self.run_file, self.get_all_input_variables())
+		else:
+			err_str = "You have not connected the pipes to "
+			raise RuntimeError(err_str + self.xml_file)
 
+	def run_R_script(self, run_file, pre_locals):	
+		print "running " + run_file + " in " + self.platform + "..."
 
-	def run_R_script(self, run_file, pre_locals):		
+		# 1. reads in the r script to a String
 		r_file = open(run_file, 'r')
 		r_script = r_file.read()
 		r_file.close()
 	
+		# 2. clears the global environment in R
 		robjects.r("rm(list=ls())")
 
+		# 3. puts all the imported variables into the global environment
 		for key in pre_locals:
 			robjects.globalenv[key] = pre_locals[key]
 
+		# 4. runs the R script
 		robjects.r(r_script)
 
+		# 5. grabs the variables and assigns them to self.save_locals
 		self.save_locals = {i: robjects.globalenv[i] for i in self.output_dict}
 		self.has_file_been_run = True
 
 
 	def run_py_script(self, run_file, pre_locals):
-		print "running " + run_file + "..."
+		print "running " + run_file + " in " + self.platform + "..."
+
+		# 1. puts all the imported variables into the global environment
 		for key in pre_locals:
 			locals()[key] = pre_locals[key]
 
-		# run the file!
+		# 2. runs the file using execfile()
 		try:
 			execfile(run_file)
 		except NameError, e:
@@ -267,10 +277,12 @@ class Module(GetXMLStuff):
 			err_string = "ERROR: You may have connected the wrong pipes: "
 			print err_string + str(e)
 		
+		# 3. grabs the variables and assigns them to self.save_locals
 		self.save_locals = locals()		
 		self.has_file_been_run = True
 			
 	def get_variable_from_locals(self, variable_name):
+		# grabs a variable from the save_locals dictionary
 		if self.has_file_been_run:
 			return self.save_locals[variable_name]
 		else:
@@ -281,6 +293,8 @@ class Module(GetXMLStuff):
 	def create_var_type_dict(self, elements):
 		''' 	for future expansion
 			will be useful when I start to allow external inputs '''
+		# creates a dictionary for all the variable names, specifying
+		# whether they are 'internal' or 'external'
 		return {e.get("name"): e.get("type") for e in elements}
 
 
