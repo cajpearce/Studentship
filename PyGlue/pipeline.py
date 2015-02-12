@@ -241,15 +241,15 @@ class Module(GetXMLStuff):
 		r_script = r_file.read()
 		r_file.close()
 	
-		r_environment = robjects.Environment()
-		
-		for key in pre_locals:
-			r_environment[key] = pre_locals[key]
+		robjects.r("rm(list=ls())")
 
-		robjects.setenvironment(r_environment)
+		for key in pre_locals:
+			robjects.globalenv[key] = pre_locals[key]
+
 		robjects.r(r_script)
 
-		self.save_locals = {i: r_environment[i] for i in self.output_dict}
+		self.save_locals = {i: robjects.globalenv[i] for i in self.output_dict}
+		self.has_file_been_run = True
 
 
 	def run_py_script(self, run_file, pre_locals):
@@ -267,8 +267,8 @@ class Module(GetXMLStuff):
 			err_string = "ERROR: You may have connected the wrong pipes: "
 			print err_string + str(e)
 		
-		self.has_file_been_run = True
 		self.save_locals = locals()		
+		self.has_file_been_run = True
 			
 	def get_variable_from_locals(self, variable_name):
 		if self.has_file_been_run:
