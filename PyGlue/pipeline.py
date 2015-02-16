@@ -290,6 +290,8 @@ class Module(GetXMLStuff):
 		# 1. puts all the imported variables into the global environment
 		print locals()
 		for key in pre_locals:
+			if key == 'pre_locals':
+				raise Exception("VariableError: you have tried passing a variable named 'pre_locals'")
 			locals()[key] = pre_locals[key]
 
 		# 2. runs the file using execfile()
