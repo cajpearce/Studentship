@@ -1,7 +1,31 @@
 from lxml import etree
-from topological_sort import sort_topologically
 import rpy2.robjects as robjects
 import os
+
+
+################################################################################
+from collections import defaultdict
+from itertools import takewhile, count
+
+def sort_topologically(graph):
+    levels_by_name = {}
+    names_by_level = defaultdict(set)
+
+    def walk_depth_first(name):
+        if name in levels_by_name:
+            return levels_by_name[name]
+        children = graph.get(name, None)
+        level = 0 if not children else (1 + max(walk_depth_first(lname) for lname in children))
+        levels_by_name[name] = level
+        names_by_level[level].add(name)
+        return level
+
+    for name in graph:
+        walk_depth_first(name)
+
+    return list(takewhile(lambda x: x is not None, (names_by_level.get(i, None) for i in count())))
+################################################################################
+
 
 
 class GetXMLStuff(object):
@@ -264,6 +288,7 @@ class Module(GetXMLStuff):
 		print "running " + run_file + " in " + self.platform + "..."
 
 		# 1. puts all the imported variables into the global environment
+		print locals()
 		for key in pre_locals:
 			locals()[key] = pre_locals[key]
 
@@ -298,5 +323,5 @@ class Module(GetXMLStuff):
 		return {e.get("name"): e.get("type") for e in elements}
 
 
-simple_pipe  = Pipeline("pipe_R.xml")
+simple_pipe  = Pipeline("pipe.xml")
 simple_pipe.run_pipeline()
