@@ -1,3 +1,14 @@
+# Christopher Pearce, 17 February 2015
+# This pipeline.py script is designed to run pipelines written using OpenAPI
+# To create a pipeline, open up the pipe XML file as a Pipeline("file")
+# To run it, p.run_pipeline()
+#
+# Written as part of my summer studentship at the University of Auckland
+
+
+
+
+
 from lxml import etree
 import rpy2.robjects as robjects
 import os
@@ -288,7 +299,6 @@ class Module(GetXMLStuff):
 		print "running " + run_file + " in " + self.platform + "..."
 
 		# 1. puts all the imported variables into the global environment
-		print locals()
 		for key in pre_locals:
 			if key == 'pre_locals':
 				raise Exception("VariableError: you have tried passing a variable named 'pre_locals'")

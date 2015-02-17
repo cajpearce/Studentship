@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<module xmlns="http://www.openapi.org/2014/" version="0.1">
-  <platform name="R"/>
-  <description><![CDATA[output 'x' is 1:10]]></description>
-  <output name="x" type="internal"/>
-  <source><![CDATA[x <- 1:10]]></source> <!-- CDATA is just unformatted code?????? read it in as it is.-->
-</module>

@@ -1,4 +1,4 @@
-import wikimarkup, urllib2,re
+import wikimarkup, urllib2, re
 import pandas as pd
 import numpy as np
 from pyquery import PyQuery
