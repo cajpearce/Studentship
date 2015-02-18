@@ -1,8 +1,3 @@
-mystripchart = function(dataframe,...) {
-	plot.new()
-	plot.
-}
-
 chris.plotter = function(data, xlabel="x", pch=16, ticks=5, labels=names(data),start.at.zero=TRUE) {
 	
 	####################

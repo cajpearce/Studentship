@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<module xmlns="http://www.openapi.org/2014/" version="0.1">
+	<platform name="R"/>
+	<description></description>
+	<output name="all.tides" type="internal"/>
+	<input name="all.downloads" type="internal"/>
+	<input name="all.csvs" type="internal"/>
+	<source ref="tide_2.r"/>
+</module>

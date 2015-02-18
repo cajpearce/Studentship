@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline xmlns="http://www.openapi.org/2014/" version="0.1">
+
+  <component name="t1" ref="tide_1.xml" type="module"/>
+  <component name="t2" ref="tide_2.xml" type="module"/>
+  <component name="t3" ref="tide_3.xml" type="module"/>
+
+  <pipe>
+    <start output="all.downloads" component="t1"/>
+    <end input="all.downloads" component="t2"/>
+  </pipe>
+  
+
+  <pipe>
+    <start output="all.csvs" component="t1"/>
+    <end input="all.csvs" component="t2"/>
+  </pipe>
+ 
+  <pipe>
+    <start output="all.tides" component="t2"/>
+    <end input="all.tides" component="t3"/>
+  </pipe>
+  
+  <pipe>
+    <start output="identifiers" component="t1"/>
+    <end input="identifiers" component="t3"/>
+  </pipe>
+  
+</pipeline>
