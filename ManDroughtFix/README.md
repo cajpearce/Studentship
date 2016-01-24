@@ -1,3 +1,8 @@
+<b>Results!</b>
+
+![25 to 29 years](http://imgur.com/eBavtPN.png)
+![35 to 39 years](http://imgur.com/dt0nYrr.png)
+
 Make sure to change dat.r
   -	CSV.loc and GIS.loc need to be absolute paths
   -	Don't change anything else
